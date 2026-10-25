@@ -1,0 +1,723 @@
+<meta charset="utf-8">
+<title>Bona Street Tienda</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;800&family=Aguafina+Script&display=swap">
+<style>
+[hidden]{display:none!important}
+/* Layout (según el boceto Home2 de Luchi): barra, header con carrito, hero navy con patrón y tabs, beneficios, productos con filtros, "Armá tu fit" interactivo, calculadora mayorista, showroom. Checkout a WhatsApp. */
+:root{
+  --base:#E8EAE9; --paper:#F6F7F6; --ink:#01283D; --navy:#01283D; --navy-ink:#E8EAE9; --support:#BBC9C3; --green:#2D6C52; --green-ink:#FFFFFF; --line:#BBC9C3; --mute:#3d5a68; --alert:#a8481a;
+  --sans:"Noto Sans",system-ui,sans-serif; --script:"Aguafina Script","Noto Sans",cursive;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--base:#0a1e29;--paper:#102a38;--ink:#E8EAE9;--navy:#031219;--navy-ink:#E8EAE9;--support:#2c4a58;--green:#4fa07c;--green-ink:#04170f;--line:#244453;--mute:#a4b8c0;--alert:#e58a55;color-scheme:dark}}
+:root[data-theme="dark"]{--base:#0a1e29;--paper:#102a38;--ink:#E8EAE9;--navy:#031219;--navy-ink:#E8EAE9;--support:#2c4a58;--green:#4fa07c;--green-ink:#04170f;--line:#244453;--mute:#a4b8c0;--alert:#e58a55;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--base);color:var(--ink);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+a{color:inherit;text-decoration:none}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.full{margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:1160px;margin:0 auto}
+.sc{font-family:var(--script);font-weight:400;text-transform:none;letter-spacing:0}
+.cap{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+h1,h2{margin:0;font-weight:800;letter-spacing:-.035em;line-height:.95;text-wrap:balance}
+.pat{position:absolute;inset:0;background-color:currentColor;-webkit-mask:url(assets/patron.png) center/cover no-repeat;mask:url(assets/patron.png) center/cover no-repeat;pointer-events:none}
+.logo{display:inline-block;background-color:currentColor;-webkit-mask:url(assets/logo.png) center/contain no-repeat;mask:url(assets/logo.png) center/contain no-repeat}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 26px;border-radius:999px;background:var(--green);color:var(--green-ink);font-weight:800;letter-spacing:.06em;font-size:14px;text-transform:uppercase;border:0}
+.btn:hover{filter:brightness(.92)}
+.btn[disabled]{opacity:.45;cursor:default}
+.boceto{background:var(--alert);color:#fff;text-align:center;font-size:12px;padding:5px 12px}
+.top{background:var(--navy);color:var(--navy-ink)}
+.top .wrap{min-height:40px;display:flex;align-items:center;justify-content:center;gap:10px 14px;flex-wrap:wrap;text-align:center;padding-block:8px;font-size:11px}
+.dot{width:5px;height:5px;background:var(--support);transform:rotate(45deg)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:8;background:var(--base);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:8px 28px;flex-wrap:wrap;min-height:72px;padding-block:6px}
+header .logo{width:78px;height:62px}
+nav{display:flex;gap:28px;align-items:center;font-size:13px}
+.iconbtn{position:relative;min-width:46px;height:46px;border-radius:999px;border:1px solid var(--line);background:transparent;display:inline-flex;align-items:center;justify-content:center;padding:0 12px;gap:6px;font-weight:700}
+.iconbtn:hover{background:var(--support)}
+.badge{background:var(--green);color:var(--green-ink);border-radius:999px;font-size:12px;min-width:20px;height:20px;display:inline-grid;place-items:center;padding:0 5px}
+.hero{background:var(--navy);color:var(--navy-ink);position:relative;overflow:hidden}
+.hero .pat{opacity:.07;color:var(--navy-ink)}
+.hero .wrap{position:relative;padding-block:56px 72px}
+.hgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:center}
+.hero h1{font-size:clamp(42px,7.2vw,92px);text-transform:uppercase;margin-top:16px;line-height:.9}
+.hero h1 .sc{display:block;font-size:.82em;text-transform:none;color:var(--support);transform:rotate(-3deg);transform-origin:left center;margin-top:4px;line-height:.95}
+.hero p{font-size:18px;max-width:30em;margin:26px 0 0}
+.hero .acts{display:flex;gap:26px;align-items:center;flex-wrap:wrap;margin-top:30px}
+.link{color:var(--support);font-weight:700;border-bottom:2px solid var(--support);padding-bottom:2px}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:40px}
+.tab{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid rgba(187,201,195,.5);background:transparent;color:var(--navy-ink);font-weight:500;font-size:14px}
+.tab[aria-pressed="true"]{background:var(--navy-ink);color:var(--navy);border-color:var(--navy-ink)}
+.hshot{position:relative;max-width:460px;margin:0 auto;width:100%}
+.hshot .frame{position:absolute;left:-14px;top:14px;right:14px;bottom:-14px;border:2px solid var(--support);border-radius:24px}
+.hshot .ph{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:4/5;background:var(--support)}
+.hshot .info{position:absolute;left:14px;bottom:14px;right:14px;max-width:320px;background:var(--base);color:var(--ink);border-radius:16px;padding:12px 16px}
+.star{position:absolute;color:var(--support)}
+.ph{background:var(--support);position:relative;overflow:hidden;display:grid;place-items:center}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.ph .fb{padding:14px;text-align:center;font-weight:800;text-transform:uppercase;letter-spacing:-.02em;opacity:.55;font-size:20px;line-height:1}
+.benef{background:var(--paper);border-bottom:1px solid var(--line)}
+.benef .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px;padding-block:28px}
+.benef b{display:block}
+.benef span{font-size:14px;color:var(--mute)}
+section.sec{padding-block:72px;scroll-margin-top:84px}
+.sec h2{font-size:clamp(34px,5vw,60px);margin-top:12px}
+.sec h2 .sc{font-size:1.25em;color:var(--green);letter-spacing:0}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-block:26px 22px;align-items:center}
+.chip{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--ink);background:transparent;font-weight:500;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--green-ink);font-weight:700}
+.search{flex:1 1 200px;min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--paper);padding:0 18px;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card .ph{aspect-ratio:4/5}
+.sello{position:absolute;left:10px;top:10px;z-index:1;background:var(--green);color:var(--green-ink);font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.1em}
+.last{position:absolute;right:10px;top:10px;z-index:1;background:var(--alert);color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+.cb{padding:14px;display:grid;gap:8px}
+.cb h3{margin:0;font-size:17px;font-weight:800;line-height:1.15}
+.pr strong{font-size:26px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.pr span{font-size:12px;color:var(--green);font-weight:700;margin-left:6px}
+.tarj{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.sizes{display:flex;gap:6px;flex-wrap:wrap}
+.sz{min-width:44px;min-height:40px;padding:0 10px;border-radius:10px;border:1.5px solid var(--ink);background:transparent;font-weight:700;font-size:13px}
+.sz[aria-pressed="true"]{background:var(--ink);color:var(--base)}
+.add{min-height:44px;border-radius:12px;border:0;background:var(--ink);color:var(--base);font-weight:700}
+.add:disabled{opacity:.35;cursor:default}
+.empty{padding:40px 0;color:var(--mute)}
+.fit{background:var(--support);position:relative;overflow:hidden}
+:root[data-theme="dark"] .fit,:root:not([data-theme="light"]) .fit{}
+.fit .pat{opacity:.09;color:var(--navy)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:start}
+.fit .wrap{position:relative}
+.pill{display:block;width:100%;min-height:52px;padding:10px 20px;border-radius:14px;border:2px solid var(--ink);background:transparent;font-weight:700;font-size:15px;text-align:left;margin-top:10px}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--base)}
+.pill small{display:block;font-weight:400;opacity:.8}
+.fitcard{background:var(--base);color:var(--ink);border-radius:24px;padding:22px;position:relative}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pair .ph{aspect-ratio:3/4;border-radius:16px}
+.sel{width:100%;min-height:44px;margin-top:8px;border-radius:10px;border:1px solid var(--line);background:var(--paper);padding:0 10px;min-width:0}
+.big{font-size:38px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.old{text-decoration:line-through;opacity:.55;font-size:16px;margin-left:8px}
+.may{background:var(--navy);color:var(--navy-ink);position:relative;overflow:hidden}
+.may .pat{opacity:.06;color:var(--navy-ink)}
+.may .wrap{position:relative}
+.calc{border:1px solid rgba(187,201,195,.45);border-radius:24px;padding:26px}
+.qchip{min-width:64px;min-height:48px;padding:0 18px;border-radius:999px;border:1px solid var(--support);background:transparent;color:var(--navy-ink);font-weight:800;font-size:16px}
+.qchip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--green-ink)}
+.tiers{display:flex;gap:8px;margin-top:18px}
+.tier{flex:1 1 0;min-width:0;padding:12px 8px;border-radius:12px;border:1px solid rgba(187,201,195,.4);text-align:center;color:var(--support)}
+.tier.on{background:var(--navy-ink);color:var(--navy);border-color:var(--navy-ink)}
+.show{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:30px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+footer{padding-block:36px 8px;font-size:13px;color:var(--mute);display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+footer .logo{width:64px;height:52px;color:var(--ink)}
+/* carrito */
+.drawer{position:fixed;inset:0;z-index:40;display:none}
+.drawer.open{display:block}
+.scrim{position:absolute;inset:0;background:rgba(1,20,31,.6)}
+.panel{position:absolute;right:0;top:0;bottom:0;width:min(440px,100%);background:var(--base);display:flex;flex-direction:column;gap:12px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) 18px}
+.panel h2{font-size:34px;margin:0}
+.items{flex:none;display:grid;gap:10px;align-content:start}
+.phead{position:sticky;top:calc(-1*max(16px,env(safe-area-inset-top,0px)));z-index:3;background:var(--base);display:grid;gap:10px;padding-block:max(0px,0px) 10px;margin-top:0;border-bottom:1px solid var(--line)}
+.it{display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);padding:8px;border-radius:14px;font-size:14px}
+.it .ph{width:56px;height:70px;border-radius:8px}
+.it .ph .fb{font-size:8px;padding:2px}
+.qty{display:flex;gap:6px;align-items:center;font-weight:700}
+.qty button{width:34px;height:34px;border-radius:50%;border:1px solid var(--ink);background:transparent}
+.tot{display:grid;gap:4px;font-variant-numeric:tabular-nums}
+.tot .r{display:flex;justify-content:space-between;font-size:14px;color:var(--mute)}
+.tot .t{display:flex;justify-content:space-between;font-size:32px;font-weight:800;letter-spacing:-.03em;color:var(--ink)}
+.wa{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:14px;background:var(--green);color:var(--green-ink);font-weight:800}
+.wa[aria-disabled="true"]{opacity:.4;pointer-events:none}
+.ghost{min-height:44px;border-radius:12px;border:1px solid var(--ink);background:transparent;font-weight:700}
+.note{font-size:13px;color:var(--mute)}
+@media (max-width:900px){
+  .hgrid,.two,.show{grid-template-columns:minmax(0,1fr);gap:40px}
+  .hshot{max-width:380px}
+}
+@media (max-width:720px){
+  nav{order:3;width:100%;overflow-x:auto;gap:22px;padding-bottom:6px}
+  section.sec{padding-block:52px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .cb{padding:10px}
+  .pr strong{font-size:21px}
+}
+@media (prefers-reduced-motion:no-preference){.rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}}
+
+.card h3 a,.card .ph a{cursor:pointer}
+.ph.link{cursor:pointer}
+.pdp{position:fixed;inset:0;z-index:20;background:var(--base);overflow:auto;-webkit-overflow-scrolling:touch}
+.pdp .bar{position:sticky;top:0;z-index:2;background:var(--base);border-bottom:1px solid var(--line);padding:max(10px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.pdp .bar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pgrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;padding-block:28px 60px;align-items:start}
+.gal .main{aspect-ratio:4/5;border-radius:24px;overflow:hidden;position:relative}
+.gal .thumbs{display:flex;gap:10px;margin-top:12px;overflow-x:auto;padding-bottom:4px}
+.gal .thumbs button{flex:none;width:72px;height:90px;border-radius:12px;overflow:hidden;border:2px solid transparent;padding:0;background:var(--support);position:relative}
+.gal .thumbs button[aria-pressed="true"]{border-color:var(--green)}
+.gal .thumbs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gal .nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:var(--base);color:var(--ink);font-size:20px;z-index:2}
+.pinfo h1{font-size:clamp(32px,5vw,52px);text-transform:none}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-block:16px 12px}
+.mode button{min-height:52px;border-radius:14px;border:2px solid var(--ink);background:transparent;font-weight:700;text-align:left;padding:6px 14px}
+.mode button small{display:block;font-weight:400;opacity:.8}
+.mode button:disabled{opacity:.45;cursor:default}
+.mode button[aria-pressed="true"]{background:var(--ink);color:var(--base)}
+.ladder{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px;margin-top:8px}
+.ladder th,.ladder td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left}
+.ladder th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.ladder td:last-child,.ladder th:last-child{text-align:right}
+.facts{display:grid;gap:8px;margin:20px 0 0;padding:0;list-style:none;font-size:14px;color:var(--mute)}
+.packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:28px}
+.pack{display:grid;grid-template-columns:120px 1fr;gap:16px;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:14px;align-items:center}
+.pack .ph{aspect-ratio:3/4;border-radius:12px}
+.box{background:var(--navy);color:var(--navy-ink);border-radius:24px;padding:32px;position:relative;overflow:hidden}
+.box .pat{opacity:.07;color:var(--navy-ink)}
+.box>div{position:relative}
+@media (max-width:900px){.pgrid{grid-template-columns:minmax(0,1fr);gap:28px}}
+@media (max-width:720px){.pack{grid-template-columns:96px 1fr}}
+
+.cstrip{margin-top:-44px;position:relative;z-index:3}
+.cstrip .wrap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.cc{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;grid-template-columns:84px 1fr;gap:14px;align-items:center;box-shadow:0 10px 30px rgba(1,40,61,.12);text-align:left;color:var(--ink)}
+.cc .ph{aspect-ratio:3/4;border-radius:12px}
+.cc b{font-size:15px;line-height:1.15}
+.cc .p{font-size:26px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
+.cc small{color:var(--mute);display:block}
+.cc .go{color:var(--green);font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.save{display:inline-block;background:var(--green);color:var(--green-ink);border-radius:999px;font-size:11px;font-weight:800;padding:3px 9px;letter-spacing:.04em}
+.best{position:absolute;left:10px;bottom:10px;z-index:1;background:var(--ink);color:var(--base);font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.08em}
+.three-u{font-size:12px;color:var(--green);font-weight:700}
+.sortrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.sortrow select{width:auto;min-width:150px;min-height:44px;border-radius:999px;padding:0 14px}
+.prog{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.prog .bar2{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:8px}
+.prog .bar2 i{display:block;height:100%;background:var(--green);border-radius:999px;transition:width .4s}
+.xsell{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px;font-size:14px}
+.sticky{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--navy);color:var(--navy-ink);padding:10px max(16px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px}
+.sticky .btn{min-height:44px;padding:0 20px}
+.trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.trust div{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px}
+.trust b{display:block;font-size:15px}
+.faq details{border-bottom:1px solid var(--line);padding:14px 0}
+.faq summary{cursor:pointer;font-weight:700;font-size:16px}
+.faq p{margin:8px 0 0;color:var(--mute)}
+.comm{background:var(--green);color:var(--green-ink);border-radius:24px;padding:28px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.comm .btn{background:var(--navy);color:var(--navy-ink)}
+@media (max-width:900px){.cstrip .wrap{grid-template-columns:minmax(0,1fr)}.cstrip{margin-top:-28px}}
+
+.cd{background:var(--alert);color:#fff;text-align:center;font-size:13px;font-weight:700;padding:8px 12px;letter-spacing:.02em}
+.cd b{font-variant-numeric:tabular-nums}
+.more{display:flex;justify-content:center;margin-top:24px}
+.rev{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:24px}
+.rev article{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:20px;display:grid;gap:10px;position:relative}
+.stars{color:#c98a00;letter-spacing:2px;font-size:18px}
+.ej{position:absolute;right:14px;top:14px;background:var(--alert);color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;letter-spacing:.08em}
+.ret{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px;align-items:center}
+.ret img{width:100%;max-width:460px;border-radius:24px;display:block;margin:0 auto}
+.ret .pt{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--green);border-radius:14px;padding:14px 18px}
+.ret .pt b{font-size:18px;display:block}
+.free{font-size:clamp(30px,5vw,52px);font-weight:800;letter-spacing:-.035em;line-height:1}
+.upg{display:grid;gap:8px}
+.upi{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px;font-size:14px}
+.upi .ph{width:48px;height:60px;border-radius:8px}.upi .ph .fb{font-size:7px;padding:2px}
+.upi button{min-height:40px;border-radius:10px;border:0;background:var(--ink);color:var(--base);font-weight:700;padding:0 12px}
+.pk2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:900px){.ret{grid-template-columns:minmax(0,1fr);gap:28px}.pk2{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+<div class="top full"><div class="wrap cap"><span>Envío gratis desde $125.000</span><i class="dot"></i><span>12% OFF por transferencia</span><i class="dot"></i><span>Mayorista desde 3 unidades</span></div></div>
+<div class="cd full" id="cd" hidden></div>
+<header class="full"><div class="wrap">
+  <a href="#inicio" aria-label="Bona Street"><span class="logo" role="img" aria-label="Bona Street"></span></a>
+  <nav class="cap"><a href="#productos">Productos</a><a href="#combos">Combos</a><a href="#mayorista">Mayorista</a><a href="#showroom">Showroom</a></nav>
+  <button class="iconbtn" id="open" type="button" aria-label="Abrir carrito">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14l-1.2 11H6.2L5 7z"/><path d="M9 7a3 3 0 016 0"/></svg>
+    <span class="badge" id="cnt">0</span>
+  </button>
+</div></header>
+
+<section class="hero full" id="inicio"><div class="pat"></div><div class="wrap">
+  <div class="hgrid">
+    <div>
+      <div class="cap rise" style="color:var(--support)">Bona Street · San Juan, Argentina</div>
+      <h1 class="rise">Streetwear<span class="sc">para todos los días.</span></h1>
+      <p class="rise">Combos desde $33.500, 12% OFF por transferencia y hasta 32% OFF llevando más. Armás el carrito y cerrás por WhatsApp.</p>
+      <div class="acts rise"><a class="btn" href="#combos">Armá tu combo</a><a class="link" href="#productos">Ver todo →</a></div>
+      <div class="tabs" id="htabs" role="group" aria-label="Destacados"></div>
+    </div>
+    <div class="hshot rise">
+      <div class="frame"></div>
+      <div class="ph" id="hph"></div>
+      <svg class="star" style="right:-18px;top:30px;width:64px;transform:rotate(12deg)" viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M20 0l3.2 13.2L40 20l-16.8 6.8L20 40l-3.2-13.2L0 20l16.8-6.8z"/></svg>
+      <div class="info"><div class="cap" style="color:var(--green);font-size:11px" id="hcat"></div><div style="font-weight:700;margin-top:2px" id="hname"></div><div><span style="font-size:22px;font-weight:800" id="hprice"></span> <span style="font-size:13px;color:var(--green);font-weight:700">por transferencia</span></div></div>
+    </div>
+  </div>
+</div></section>
+
+
+<section class="cstrip full"><div class="wrap" id="cstrip"></div></section>
+<section class="benef full"><div class="wrap">
+  <div><b class="cap">Envío gratis desde $125.000</b><span>A todo el país. Moto en el día en San Juan.</span></div>
+  <div><b class="cap">Mayorista desde 3 unidades</b><span>Cuanto más llevás, menos pagás.</span></div>
+  <div><b class="cap">Comprás por WhatsApp</b><span>Armás el carrito y nos llega el pedido.</span></div>
+  <div><b class="cap">Stock real</b><span>Lo que ves, hay. Por talle.</span></div>
+</div></section>
+
+<section class="sec" id="productos"><div class="wrap">
+  <div class="cap" style="color:var(--green)">Productos</div>
+  <h2>Lo que hay <span class="sc">ahora.</span></h2>
+  <div class="tools"><div id="chips" style="display:contents"></div></div><div class="sortrow"><input class="search" id="q" type="search" placeholder="Buscar modelo" aria-label="Buscar modelo"><select class="sel" id="sort" aria-label="Ordenar"><option value="top">Más pedidos</option><option value="asc">Menor precio</option><option value="desc">Mayor precio</option></select><select class="sel" id="fsz" aria-label="Talle"><option value="">Todos los talles</option></select></div>
+  <div class="grid" id="grid"></div>
+  <div class="more" id="more"></div>
+  <p class="note" id="resumen" style="margin-top:18px"></p>
+</div></section>
+
+<section class="sec fit full" id="combos"><div class="pat"></div><div class="wrap">
+  <div class="two">
+    <div>
+      <div class="cap">Combos</div>
+      <h2 style="font-size:clamp(40px,6vw,80px)">Armá tu <span class="sc">fit.</span></h2>
+      <p style="font-size:18px;max-width:26em;margin:18px 0 0">Elegí la bermuda y la remera. El precio del combo es fijo, por transferencia o efectivo, y no se suma al descuento por cantidad.</p>
+      <div id="cpills" role="group" aria-label="Tipo de combo" style="max-width:460px;margin-top:22px"></div>
+    </div>
+    <div class="fitcard" id="fitcard"></div>
+</div>
+</div></section>
+
+
+<section class="sec" id="packs"><div class="wrap">
+  <div class="cap" style="color:var(--green)">Packs</div>
+  <h2>Elegí dos <span class="sc">y ahorrá.</span></h2>
+  <p style="font-size:18px;max-width:32em;margin:16px 0 0">Dos prendas de la misma categoría, con cualquier modelo disponible, y 10% OFF sobre el total. Pagás por transferencia o efectivo.</p>
+  <div class="tools" id="ptabs" role="group" aria-label="Tipo de pack"></div>
+  <div class="fitcard" id="packcard" style="max-width:760px"></div>
+  <p class="note" style="margin-top:12px">Packs en borrador: porcentaje a confirmar.</p>
+</div></section>
+<section class="sec" style="padding-top:0"><div class="wrap">
+  <div class="box"><div class="pat"></div><div style="max-width:560px;display:grid;gap:12px">
+    <div class="cap" style="color:var(--support)">Próximamente</div>
+    <h2 style="font-size:clamp(36px,5vw,64px);margin:0">Bona<span class="sc" style="color:var(--support)">box.</span></h2>
+    <p style="font-size:18px;margin:0">Una caja sorpresa con el precio de un combo, pero más económica. Te puede tocar cualquier prenda. Tenés suerte o no.</p>
+    <div><a class="btn" id="boxwa" href="#" target="_blank" rel="noopener">Avisame cuando salga</a></div>
+  </div></div>
+</div></section>
+<section class="sec may full" id="mayorista"><div class="pat"></div><div class="wrap">
+  <div class="two">
+    <div>
+      <div class="cap" style="color:var(--support)">¿Tenés un emprendimiento?</div>
+      <h2 style="font-size:clamp(38px,5.5vw,72px)">Ventas mayoristas a partir de <span class="sc" style="color:var(--support)">3 unidades.</span></h2>
+      <p style="font-size:18px;max-width:28em;margin:20px 0 0">Cuanto más llevás, menos pagás. Combiná modelos y talles como quieras.</p>
+      <div style="margin-top:28px"><a class="btn" href="https://bonastreet23-crypto.github.io/Mayorista/" target="_blank" rel="noopener">Ver lista mayorista</a></div>
+    </div>
+    <div class="calc">
+      <div class="cap" style="color:var(--support)">Calculá tu precio</div>
+      <div style="font-size:14px;margin-top:6px" id="cex"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px" id="qchips" role="group" aria-label="Cantidad de prendas"></div>
+      <div class="tiers" id="tiers"></div>
+      <div style="margin-top:24px;border-top:1px solid rgba(187,201,195,.3);padding-top:18px">
+        <div class="cap" style="color:var(--support)">Pagás por transferencia</div>
+        <div style="font-size:48px;font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-top:6px;font-variant-numeric:tabular-nums" id="ctrans"></div>
+        <div style="font-size:14px;margin-top:6px" id="ccardp"></div>
+      </div>
+      <div style="font-size:12px;margin-top:14px;opacity:.8">El descuento por cantidad se suma al 12% OFF por transferencia.</div>
+    </div>
+  </div>
+</div></section>
+
+
+
+<section class="sec" id="resenas"><div class="wrap" id="revwrap">
+  <div class="cap" style="color:var(--green)">Reseñas</div>
+  <h2>Lo que dicen <span class="sc">los clientes.</span></h2>
+  <div class="rev" id="revlist"></div>
+  <p style="margin-top:18px"><a class="btn" id="revwa" href="#" target="_blank" rel="noopener">Dejá tu reseña</a></p>
+</div></section>
+<section class="sec" id="retiros"><div class="wrap">
+  <div class="ret">
+    <img src="assets/retiros.jpg" alt="Mapa de Argentina con los puntos de retiro de San Juan (Rivadavia) y CABA (Caballito)">
+    <div style="display:grid;gap:14px">
+      <div class="cap" style="color:var(--green)">Cómo recibís tu pedido</div>
+      <h2 style="font-size:clamp(34px,5vw,60px)">Retirá o <span class="sc">recibilo.</span></h2>
+      <div class="pt"><b>San Juan · Rivadavia</b>Punto de retiro. Envíos en el día por moto mensajería. Suipacha 4027 (oeste), lunes a viernes de 9 a 18.</div>
+      <div class="pt"><b>CABA · Caballito</b>Punto de retiro. Coordinamos el horario por WhatsApp.</div>
+      <div style="margin-top:6px"><div class="cap">Envíos a todo el país</div><div class="free">Gratis desde $125.000</div></div>
+    </div>
+  </div>
+</div></section>
+<section class="sec" style="padding-top:20px"><div class="wrap">
+  <div class="comm"><div style="max-width:520px"><div class="cap">Comunidad Bona</div><div style="font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-top:6px">Enterate primero de los descuentos y del stock nuevo.</div></div><a class="btn" id="commwa" href="#" target="_blank" rel="noopener">Quiero sumarme</a></div>
+</div></section>
+<section class="sec" style="padding-top:20px"><div class="wrap">
+  <div class="trust"><div><b>12% OFF por transferencia</b>El precio principal ya lo tiene. Con tarjeta se suma el recargo.</div><div><b>Más llevás, menos pagás</b>3, 10 o 20 unidades: 15%, 23% o 32% OFF.</div><div><b>Envío gratis desde $125.000</b>A todo el país. En San Juan, moto mensajería en el día.</div><div><b>Stock real por talle</b>Lo que ves es lo que hay en el showroom.</div></div>
+  <div class="faq" style="margin-top:28px;max-width:760px">
+    <div class="cap" style="color:var(--green);margin-bottom:6px">Preguntas frecuentes</div>
+    <details><summary>¿Cómo compro?</summary><p>Armás el carrito, tocás "Enviar pedido por WhatsApp" y se abre el chat con tu pedido listo. Te pasamos los datos de pago y coordinamos el envío.</p></details>
+    <details><summary>¿Los combos se suman al descuento por cantidad?</summary><p>No. El precio del combo es final, siempre por transferencia o efectivo. El descuento de 3, 10 y 20 unidades aplica a las prendas sueltas.</p></details>
+    <details><summary>¿Puedo retirar en San Juan?</summary><p>Sí. En San Juan: Suipacha 4027 (oeste), Rivadavia, de lunes a viernes de 9 a 18. En CABA: punto de retiro en Caballito.</p></details>
+    <details><summary>¿Qué es mayorista?</summary><p>Comprás desde 3 unidades con descuento por cantidad. Para listas completas, mirá la web mayorista.</p></details>
+  </div>
+</div></section>
+<section class="sec" id="showroom"><div class="wrap">
+  <div class="show">
+    <div><div class="cap" style="color:var(--green)">Showroom</div><h2 style="font-size:clamp(30px,4vw,48px)">Retirá en <span class="sc">San Juan.</span></h2></div>
+    <div style="display:grid;gap:8px"><div>Suipacha 4027 (oeste), Los Mirasoles, Rivadavia, San Juan.</div><div>Retiros de lunes a viernes de 9 a 18. Visitas a coordinar por WhatsApp. También retiro en CABA (Caballito).</div><div><a class="btn" id="wa2" href="#" target="_blank" rel="noopener">Escribinos por WhatsApp</a></div></div>
+  </div>
+  <footer><span class="logo" role="img" aria-label="Bona Street"></span><span>Streetwear para todos los días. Vestite bien. Pagá lo justo.</span></footer>
+</div></section>
+
+
+<div class="sticky" id="sticky" hidden><div><div class="cap" style="font-size:11px;color:var(--support)" id="stn"></div><div style="font-size:20px;font-weight:800;letter-spacing:-.02em" id="stt"></div></div><button class="btn" id="stgo" type="button">Finalizar compra</button></div>
+<div class="pdp" id="pdp" hidden role="dialog" aria-label="Producto">
+  <div class="bar"><div class="wrap"><button class="ghost" id="pback" type="button" style="padding:0 18px">← Volver</button><button class="iconbtn" id="open2" type="button" aria-label="Abrir carrito"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14l-1.2 11H6.2L5 7z"/><path d="M9 7a3 3 0 016 0"/></svg><span class="badge" id="cnt2">0</span></button></div></div>
+  <div class="wrap" style="padding-inline:max(16px,env(safe-area-inset-left,0px))"><div class="pgrid" id="pbody"></div>
+  <div id="prel" style="padding-bottom:60px"></div></div>
+</div>
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="scrim" id="scrim"></div>
+  <aside class="panel" role="dialog" aria-label="Carrito">
+    <div class="phead">
+      <div style="display:flex;justify-content:space-between;align-items:center"><h2>Tu pedido</h2><button class="ghost" id="close" type="button" style="padding:0 16px">Cerrar</button></div>
+      <a class="wa" id="wa" href="#" target="_blank" rel="noopener" aria-disabled="true">Enviar pedido por WhatsApp · <span id="watot" style="margin-left:6px"></span></a>
+    </div>
+    <div class="items" id="items"></div>
+    <div id="xs" style="display:grid;gap:10px"></div>
+    <div id="prog" style="display:grid;gap:10px"></div>
+    <div id="up"></div>
+    <div class="tot" id="tot"></div>
+    <button class="ghost" id="copy" type="button">Copiar pedido</button>
+    <div class="note" id="msg">Se abre WhatsApp con el pedido armado. Si no abre, copiá el pedido y pegalo en el chat.</div>
+  </aside>
+</div>
+
+<script>
+const WA="5492644113870";
+const DATA=[{"id":"BAG-001","skus":["BAG-001"],"sold":0,"cmb":false,"up":false,"name":"Baggy Real Tree Black","cat":"Baggys y joggings","sub":"Baggys","p":45000,"c":51100,"ph":["img/tn/baggy-real-tree-black-0.jpg","img/tn/baggy-real-tree-black-1.jpg"],"v":[{"sku":"BAG-001","c":"NEGRO","t":"42","q":1}]},{"id":"BAG-002","skus":["BAG-002"],"sold":0,"cmb":false,"up":false,"name":"Baggy Lyon","cat":"Baggys y joggings","sub":"Baggys","p":45000,"c":51100,"ph":["img/tn/baggy-lyon-0.jpg","img/tn/baggy-lyon-1.jpg","img/tn/baggy-lyon-2.jpg","img/tn/baggy-lyon-3.jpg"],"v":[{"sku":"BAG-002","c":"AZUL","t":"44","q":1}]},{"id":"BAG-003","skus":["BAG-003"],"sold":1,"cmb":false,"up":false,"name":"Baggy Travis","cat":"Baggys y joggings","sub":"Baggys","p":45000,"c":51100,"ph":["img/tn/baggy-travis-0.jpg","img/tn/baggy-travis-1.jpg","img/tn/baggy-travis-2.jpg"],"v":[{"sku":"BAG-003","c":"GRIS","t":"42","q":0},{"sku":"BAG-003","c":"GRIS","t":"44","q":1}]},{"id":"BAG-006","skus":["BAG-006"],"sold":2,"cmb":false,"up":false,"name":"Baggy Óxido","cat":"Baggys y joggings","sub":"Baggys","p":45000,"c":51100,"ph":["img/tn/baggy-oxido-0.jpg","img/tn/baggy-oxido-1.jpg","img/tn/baggy-oxido-2.jpg"],"v":[{"sku":"BAG-006","c":"AZUL OXIDO","t":"38","q":0},{"sku":"BAG-006","c":"AZUL OXIDO","t":"46","q":1}]},{"id":"BAG-008","skus":["BAG-008"],"sold":1,"cmb":false,"up":false,"name":"Jogging Track Pants","cat":"Baggys y joggings","sub":"Joggings","p":34900,"c":39700,"ph":["img/tn/jogging-baggy-track-pants-0.jpg","img/tn/jogging-baggy-track-pants-1.jpg"],"v":[{"sku":"BAG-008","c":"GRIS","t":"M","q":1},{"sku":"BAG-008","c":"GRIS","t":"XL","q":0}]},{"id":"BER-001","skus":["BER-001"],"sold":1,"cmb":false,"up":false,"name":"Bermuda baggy Proyect Camo","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-proyect-camo-0.jpg","img/tn/bermuda-baggy-proyect-camo-1.jpg","img/tn/bermuda-baggy-proyect-camo-2.jpg","img/tn/bermuda-baggy-proyect-camo-3.jpg"],"v":[{"sku":"BER-001","c":"CAMO","t":"40","q":0},{"sku":"BER-001","c":"CAMO","t":"42","q":1},{"sku":"BER-001","c":"CAMO","t":"44","q":1}]},{"id":"BER-002","skus":["BER-002"],"sold":0,"cmb":false,"up":false,"name":"Bermuda baggy Camo","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-camo-0.jpg","img/tn/bermuda-baggy-camo-1.jpg","img/tn/bermuda-baggy-camo-2.jpg","img/tn/bermuda-baggy-camo-3.jpg"],"v":[{"sku":"BER-002","c":"CAMO","t":"44","q":1}]},{"id":"BER-003","skus":["BER-003"],"sold":1,"cmb":false,"up":false,"name":"Bermuda baggy Monaco","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-monaco-0.jpg","img/tn/bermuda-baggy-monaco-1.jpg","img/tn/bermuda-baggy-monaco-2.jpg"],"v":[{"sku":"BER-003","c":"","t":"42","q":0},{"sku":"BER-003","c":"","t":"44","q":1},{"sku":"BER-003","c":"","t":"46","q":1}]},{"id":"BER-004","skus":["BER-004"],"sold":1,"cmb":false,"up":false,"name":"Bermuda baggy Rebelion","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-rebelion-0.jpg","img/tn/bermuda-baggy-rebelion-1.jpg","img/tn/bermuda-baggy-rebelion-2.jpg"],"v":[{"sku":"BER-004","c":"","t":"38","q":1},{"sku":"BER-004","c":"","t":"42","q":0}]},{"id":"BER-005","skus":["BER-005"],"sold":0,"cmb":false,"up":false,"name":"Bermuda baggy Camuflado","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-bape-0.jpg","img/tn/bermuda-baggy-bape-1.jpg","img/tn/bermuda-baggy-bape-2.jpg","img/tn/bermuda-baggy-bape-3.jpg"],"v":[{"sku":"BER-005","c":"","t":"38","q":1},{"sku":"BER-005","c":"","t":"44","q":1},{"sku":"BER-005","c":"","t":"46","q":1}]},{"id":"BER-006","skus":["BER-006"],"sold":1,"cmb":false,"up":false,"name":"Bermuda baggy Camo Dark","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-camo-dark-0.jpg","img/tn/bermuda-baggy-camo-dark-1.jpg","img/tn/bermuda-baggy-camo-dark-2.jpg","img/tn/bermuda-baggy-camo-dark-3.jpg"],"v":[{"sku":"BER-006","c":"","t":"40","q":0},{"sku":"BER-006","c":"","t":"44","q":1}]},{"id":"BER-007","skus":["BER-007"],"sold":0,"cmb":false,"up":false,"name":"Bermuda baggy Dark Side","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-dark-side-0.jpg","img/tn/bermuda-baggy-dark-side-1.jpg","img/tn/bermuda-baggy-dark-side-2.jpg"],"v":[{"sku":"BER-007","c":"","t":"46","q":1}]},{"id":"BER-008","skus":["BER-008"],"sold":0,"cmb":false,"up":false,"name":"Bermuda baggy Retro","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-retro-0.jpg","img/tn/bermuda-baggy-retro-1.jpg","img/tn/bermuda-baggy-retro-2.jpg"],"v":[{"sku":"BER-008","c":"","t":"38","q":1},{"sku":"BER-008","c":"","t":"46","q":1}]},{"id":"BER-009","skus":["BER-009"],"sold":0,"cmb":false,"up":false,"name":"Bermuda baggy Arc Azul","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-arc-azul-0.jpg","img/tn/bermuda-baggy-arc-azul-1.jpg","img/tn/bermuda-baggy-arc-azul-2.jpg"],"v":[{"sku":"BER-009","c":"","t":"48","q":1}]},{"id":"BER-010","skus":["BER-010"],"sold":0,"cmb":false,"up":false,"name":"Bermuda baggy Grey Oscuro","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-grey-oscuro-0.jpg","img/tn/bermuda-baggy-grey-oscuro-1.jpg","img/tn/bermuda-baggy-grey-oscuro-2.jpg"],"v":[{"sku":"BER-010","c":"","t":"44","q":1}]},{"id":"BER-011","skus":["BER-011"],"sold":0,"cmb":true,"up":false,"name":"Bermuda baggy Crema","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-duki-0.jpg","img/tn/bermuda-baggy-duki-1.jpg","img/tn/bermuda-baggy-duki-2.jpg","img/tn/bermuda-baggy-duki-3.jpg"],"v":[{"sku":"BER-011","c":"","t":"40","q":1},{"sku":"BER-011","c":"","t":"42","q":1},{"sku":"BER-011","c":"","t":"44","q":2},{"sku":"BER-011","c":"","t":"46","q":2}]},{"id":"BER-012","skus":["BER-012"],"sold":0,"cmb":true,"up":false,"name":"Bermuda baggy Classic Light","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-classic-light-0.jpg","img/tn/bermuda-baggy-classic-light-1.jpg","img/tn/bermuda-baggy-classic-light-2.jpg"],"v":[{"sku":"BER-012","c":"","t":"38","q":1},{"sku":"BER-012","c":"","t":"40","q":1},{"sku":"BER-012","c":"","t":"42","q":1},{"sku":"BER-012","c":"","t":"44","q":1},{"sku":"BER-012","c":"","t":"46","q":1}]},{"id":"BER-013","skus":["BER-013"],"sold":0,"cmb":true,"up":false,"name":"Bermuda baggy Classic Blue","cat":"Bermudas","sub":"Bermuda Baggy","p":44900,"c":51000,"ph":["img/tn/bermuda-baggy-classic-blue-0.jpg","img/tn/bermuda-baggy-classic-blue-1.jpg"],"v":[{"sku":"BER-013","c":"","t":"44","q":2},{"sku":"BER-013","c":"","t":"46","q":1}]},{"id":"BER-014","skus":["BER-014","BER-016"],"sold":1,"cmb":false,"up":false,"name":"Bermuda Jogging blessed","cat":"Bermudas","sub":"Bermuda Baggy","p":25256,"c":28700,"ph":["img/tn/bermuda-baggy-jogging-blessed-0.jpg","img/tn/bermuda-baggy-jogging-blessed-1.jpg","img/tn/bermuda-baggy-jogging-blessed-2.jpg","img/tn/bermuda-baggy-jogging-blessed-3.jpg"],"v":[{"sku":"BER-014","c":"GRIS","t":"L","q":1},{"sku":"BER-014","c":"GRIS","t":"M","q":0},{"sku":"BER-014","c":"GRIS","t":"S","q":1},{"sku":"BER-016","c":"AZUL M","t":"L","q":1},{"sku":"BER-016","c":"AZUL M","t":"M","q":1},{"sku":"BER-016","c":"AZUL M","t":"S","q":1}]},{"id":"BER-017","skus":["BER-017","BER-018","BER-019"],"sold":2,"cmb":false,"up":false,"name":"Bermuda Jogging classic","cat":"Bermudas","sub":"Bermuda Baggy","p":25256,"c":28700,"ph":["img/tn/bermuda-baggy-jogging-classic-0.jpg","img/tn/bermuda-baggy-jogging-classic-1.jpg","img/tn/bermuda-baggy-jogging-classic-2.jpg","img/tn/bermuda-baggy-jogging-classic-3.jpg"],"v":[{"sku":"BER-017","c":"GRIS","t":"L","q":1},{"sku":"BER-017","c":"GRIS","t":"M","q":0},{"sku":"BER-017","c":"GRIS","t":"S","q":1},{"sku":"BER-018","c":"NEGRO","t":"L","q":1},{"sku":"BER-018","c":"NEGRO","t":"M","q":1},{"sku":"BER-018","c":"NEGRO","t":"S","q":0},{"sku":"BER-019","c":"AZUL M","t":"M","q":1},{"sku":"BER-019","c":"AZUL M","t":"S","q":1}]},{"id":"BER-020","skus":["BER-020","BER-021","BER-022"],"sold":1,"cmb":false,"up":false,"name":"Bermuda Jogging japon","cat":"Bermudas","sub":"Bermuda Baggy","p":25256,"c":28700,"ph":["img/tn/bermuda-baggy-jogging-japon-0.jpg","img/tn/bermuda-baggy-jogging-japon-1.jpg","img/tn/bermuda-baggy-jogging-japon-2.jpg","img/tn/bermuda-baggy-jogging-japon-3.jpg"],"v":[{"sku":"BER-020","c":"GRIS","t":"L","q":1},{"sku":"BER-020","c":"GRIS","t":"M","q":1},{"sku":"BER-021","c":"NEGRO","t":"L","q":1},{"sku":"BER-021","c":"NEGRO","t":"M","q":0},{"sku":"BER-022","c":"AZUL M","t":"L","q":1},{"sku":"BER-022","c":"AZUL M","t":"M","q":1}]},{"id":"BER-023","skus":["BER-023","BER-024"],"sold":0,"cmb":false,"up":false,"name":"Bermuda baggy Grit","cat":"Bermudas","sub":"Bermuda Baggy","p":21900,"c":24900,"ph":["img/tn/bermuda-baggy-jogging-fallado-0.jpg","img/tn/bermuda-baggy-jogging-fallado-1.jpg","img/tn/bermuda-baggy-jogging-fallado-2.jpg","img/tn/bermuda-baggy-jogging-fallado-3.jpg"],"v":[{"sku":"BER-023","c":"NEGRO","t":"M","q":1},{"sku":"BER-024","c":"AZUL M","t":"M","q":1}]},{"id":"BER-025","skus":["BER-025","BER-026","BER-027","BER-028"],"sold":0,"cmb":true,"up":false,"name":"Bermuda jogging bassic","cat":"Bermudas","sub":"Bermuda Baggy","p":17300,"c":19700,"ph":[],"v":[{"sku":"BER-025","c":"NEGRO","t":"L","q":1},{"sku":"BER-025","c":"NEGRO","t":"M","q":1},{"sku":"BER-025","c":"NEGRO","t":"S","q":1},{"sku":"BER-025","c":"NEGRO","t":"XL","q":1},{"sku":"BER-025","c":"NEGRO","t":"XXL","q":1},{"sku":"BER-025","c":"NEGRO","t":"XXXL","q":2},{"sku":"BER-026","c":"GRIS MELANGE","t":"L","q":1},{"sku":"BER-026","c":"GRIS MELANGE","t":"M","q":1},{"sku":"BER-026","c":"GRIS MELANGE","t":"S","q":1},{"sku":"BER-026","c":"GRIS MELANGE","t":"XL","q":1},{"sku":"BER-026","c":"GRIS MELANGE","t":"XXL","q":1},{"sku":"BER-026","c":"GRIS MELANGE","t":"XXXL","q":1},{"sku":"BER-027","c":"CHOCOLATE","t":"L","q":1},{"sku":"BER-027","c":"CHOCOLATE","t":"M","q":1},{"sku":"BER-027","c":"CHOCOLATE","t":"S","q":1},{"sku":"BER-027","c":"CHOCOLATE","t":"XL","q":1},{"sku":"BER-027","c":"CHOCOLATE","t":"XXL","q":1},{"sku":"BER-027","c":"CHOCOLATE","t":"XXXL","q":0},{"sku":"BER-028","c":"CHOCOLATE","t":"L","q":1},{"sku":"BER-028","c":"CHOCOLATE","t":"M","q":1},{"sku":"BER-028","c":"CHOCOLATE","t":"S","q":1},{"sku":"BER-028","c":"CHOCOLATE","t":"XL","q":1},{"sku":"BER-028","c":"CHOCOLATE","t":"XXL","q":1}]},{"id":"BER-029","skus":["BER-029"],"sold":0,"cmb":false,"up":false,"name":"Bermuda baggy pocket","cat":"Bermuda","sub":"Bermuda","p":32500,"c":36900,"ph":["img/tn/bermuda-baggy-jogging-pocket-0.jpg","img/tn/bermuda-baggy-jogging-pocket-1.jpg","img/tn/bermuda-baggy-jogging-pocket-2.jpg","img/tn/bermuda-baggy-jogging-pocket-3.jpg"],"v":[{"sku":"BER-029","c":"GRIS MELANGE","t":"L","q":2},{"sku":"BER-029","c":"GRIS MELANGE","t":"M","q":2},{"sku":"BER-029","c":"GRIS MELANGE","t":"S","q":1}]},{"id":"BUZ-001","skus":["BUZ-001","BUZ-002"],"sold":2,"cmb":true,"up":false,"name":"Buzo Basic","cat":"Buzos y camperas","sub":"Buzos","p":24900,"c":28300,"ph":["img/tn/buzo-basic-0.jpg","img/tn/buzo-basic-1.jpg","img/tn/buzo-basic-2.jpg","img/tn/buzo-basic-3.jpg"],"v":[{"sku":"BUZ-001","c":"NEGRO","t":"XL","q":1},{"sku":"BUZ-001","c":"NEGRO","t":"XXL","q":1},{"sku":"BUZ-001","c":"NEGRO","t":"XXXL","q":0},{"sku":"BUZ-002","c":"GRIS M","t":"L","q":1},{"sku":"BUZ-002","c":"GRIS M","t":"XL","q":0}]},{"id":"BUZ-003","skus":["BUZ-003"],"sold":0,"cmb":true,"up":false,"name":"Buzo Polo Win","cat":"Buzos y camperas","sub":"Buzos","p":28000,"c":31800,"ph":["img/tn/buzo-polo-win-0.jpg","img/tn/buzo-polo-win-1.jpg","img/tn/buzo-polo-win-2.jpg","img/tn/buzo-polo-win-3.jpg"],"v":[{"sku":"BUZ-003","c":"NEGRO","t":"L","q":1},{"sku":"BUZ-003","c":"NEGRO","t":"M","q":1},{"sku":"BUZ-003","c":"NEGRO","t":"XL","q":1},{"sku":"BUZ-003","c":"NEGRO","t":"XXL","q":1}]},{"id":"CAM-002","skus":["CAM-002"],"sold":0,"cmb":false,"up":false,"name":"Zip Hoodie","cat":"Buzos y camperas","sub":"Campera","p":35000,"c":39800,"ph":["img/tn/campera-zip-hoodie-0.jpg","img/tn/campera-zip-hoodie-1.jpg","img/tn/campera-zip-hoodie-2.jpg","img/tn/campera-zip-hoodie-3.jpg"],"v":[{"sku":"CAM-002","c":"BEIGE","t":"L","q":1}]},{"id":"CAM-005","skus":["CAM-005"],"sold":0,"cmb":false,"up":false,"name":"Campera Nevada","cat":"Buzos y camperas","sub":"Campera","p":68500,"c":77800,"ph":["img/tn/campera-tnf-nevada-0.jpg"],"v":[{"sku":"CAM-005","c":"GRIS","t":"XXXL","q":1}]},{"id":"CCJ-004","skus":["CCJ-004"],"sold":0,"cmb":false,"up":false,"name":"Conjunto tracksuite","cat":"Conjuntos","sub":"Conjuntos","p":61500,"c":69900,"ph":["img/tn/conjunto-nike-tracksuit-0.jpg","img/tn/conjunto-nike-tracksuit-1.jpg"],"v":[{"sku":"CCJ-004","c":"NEGRO","t":"XXL","q":1}]},{"id":"DIA-002","skus":["DIA-002"],"sold":0,"cmb":false,"up":false,"name":"Short importado Rosa Nude","cat":"Shorts","sub":"Short Diamond Importado","p":29568,"c":33600,"ph":["img/tn/short-diamond-importado-rosa-nude-0.jpg","img/tn/short-diamond-importado-rosa-nude-1.jpg","img/tn/short-diamond-importado-rosa-nude-2.jpg","img/tn/short-diamond-importado-rosa-nude-3.jpg"],"v":[{"sku":"DIA-002","c":"ROSA NUDE","t":"M","q":1},{"sku":"DIA-002","c":"ROSA NUDE","t":"S","q":1},{"sku":"DIA-002","c":"ROSA NUDE","t":"XL","q":1},{"sku":"DIA-002","c":"ROSA NUDE","t":"XXXL","q":1}]},{"id":"DIA-003","skus":["DIA-003"],"sold":1,"cmb":false,"up":false,"name":"Short importado Negro","cat":"Shorts","sub":"Short Diamond Importado","p":29568,"c":33600,"ph":["img/tn/short-diamond-importado-negro-0.jpg","img/tn/short-diamond-importado-negro-1.jpg","img/tn/short-diamond-importado-negro-2.jpg"],"v":[{"sku":"DIA-003","c":"NEGRO","t":"L","q":0},{"sku":"DIA-003","c":"NEGRO","t":"M","q":0},{"sku":"DIA-003","c":"NEGRO","t":"S","q":1},{"sku":"DIA-003","c":"NEGRO","t":"XL","q":0},{"sku":"DIA-003","c":"NEGRO","t":"XXL","q":0}]},{"id":"DIA-004","skus":["DIA-004"],"sold":0,"cmb":false,"up":false,"name":"Short importado Negro Detalles Fluor","cat":"Shorts","sub":"Short Diamond Importado","p":29568,"c":33600,"ph":[],"v":[{"sku":"DIA-004","c":"NEGRO DETALLES FLUOR","t":"XXL","q":1}]},{"id":"DIA-005","skus":["DIA-005"],"sold":0,"cmb":false,"up":false,"name":"Short importado Celeste","cat":"Shorts","sub":"Short Diamond Importado","p":29568,"c":33600,"ph":["img/tn/short-diamond-importado-celeste-0.jpg","img/tn/short-diamond-importado-celeste-1.jpg"],"v":[{"sku":"DIA-005","c":"CELESTE","t":"XL","q":1},{"sku":"DIA-005","c":"CELESTE","t":"XXXL","q":1}]},{"id":"DIA-007","skus":["DIA-007"],"sold":0,"cmb":false,"up":false,"name":"Short importado Azul","cat":"Shorts","sub":"Short Diamond Importado","p":29568,"c":33600,"ph":["img/tn/short-diamond-importado-azul-0.jpg","img/tn/short-diamond-importado-azul-1.jpg","img/tn/short-diamond-importado-azul-2.jpg","img/tn/short-diamond-importado-azul-3.jpg"],"v":[{"sku":"DIA-007","c":"AZUL","t":"L","q":0},{"sku":"DIA-007","c":"AZUL","t":"M","q":1},{"sku":"DIA-007","c":"AZUL","t":"XL","q":1}]},{"id":"DIA-008","skus":["DIA-008"],"sold":0,"cmb":false,"up":false,"name":"Short importado Negro con Morado","cat":"Shorts","sub":"Short Diamond Importado","p":29568,"c":33600,"ph":["img/tn/short-diamond-importado-negro-con-morado-0.jpg","img/tn/short-diamond-importado-negro-con-morado-1.jpg","img/tn/short-diamond-importado-negro-con-morado-2.jpg"],"v":[{"sku":"DIA-008","c":"NEGRO CON MORADO","t":"L","q":1},{"sku":"DIA-008","c":"NEGRO CON MORADO","t":"M","q":1}]},{"id":"DIA-009","skus":["DIA-009"],"sold":0,"cmb":false,"up":false,"name":"Short importado Turquesa","cat":"Shorts","sub":"Short Diamond Importado","p":33600,"c":38200,"ph":["img/tn/short-diamond-importado-turquesa-0.jpg","img/tn/short-diamond-importado-turquesa-1.jpg","img/tn/short-diamond-importado-turquesa-2.jpg","img/tn/short-diamond-importado-turquesa-3.jpg"],"v":[{"sku":"DIA-009","c":"TURQUESA","t":"L","q":1},{"sku":"DIA-009","c":"TURQUESA","t":"M","q":1},{"sku":"DIA-009","c":"TURQUESA","t":"XXXL","q":1}]},{"id":"DIA-010","skus":["DIA-010"],"sold":0,"cmb":false,"up":false,"name":"Short importado Azul y Verde","cat":"Shorts","sub":"Short Diamond Importado","p":33600,"c":38200,"ph":["img/tn/short-diamond-importado-azul-y-verde-0.jpg","img/tn/short-diamond-importado-azul-y-verde-1.jpg","img/tn/short-diamond-importado-azul-y-verde-2.jpg"],"v":[{"sku":"DIA-010","c":"AZUL Y VERDE","t":"M","q":1}]},{"id":"DIA-011","skus":["DIA-011"],"sold":0,"cmb":false,"up":false,"name":"Short importado Bicolor Pastel","cat":"Shorts","sub":"Short Diamond Importado","p":33600,"c":38200,"ph":["img/tn/short-diamond-importado-bicolor-pastel-0.jpg","img/tn/short-diamond-importado-bicolor-pastel-1.jpg"],"v":[{"sku":"DIA-011","c":"BICOLOR PASTEL","t":"M","q":1}]},{"id":"DIA-012","skus":["DIA-012"],"sold":0,"cmb":false,"up":false,"name":"Short importado Blanco y Rojo","cat":"Shorts","sub":"Short Diamond Importado","p":33600,"c":38200,"ph":["img/tn/short-diamond-importado-blanco-y-rojo-0.jpg","img/tn/short-diamond-importado-blanco-y-rojo-1.jpg","img/tn/short-diamond-importado-blanco-y-rojo-2.jpg"],"v":[{"sku":"DIA-012","c":"BLANCO Y ROJO","t":"L","q":1}]},{"id":"DIA-013","skus":["DIA-013"],"sold":0,"cmb":false,"up":false,"name":"Short importado Morado","cat":"Shorts","sub":"Short Diamond Importado","p":33600,"c":38200,"ph":["img/tn/short-diamond-importado-morado-0.jpg","img/tn/short-diamond-importado-morado-1.jpg","img/tn/short-diamond-importado-morado-2.jpg","img/tn/short-diamond-importado-morado-3.jpg"],"v":[{"sku":"DIA-013","c":"MORADO","t":"L","q":1}]},{"id":"DIA-014","skus":["DIA-014"],"sold":0,"cmb":false,"up":false,"name":"Short importado Blanco y Verde","cat":"Shorts","sub":"Short Diamond Importado","p":33600,"c":38200,"ph":["img/tn/short-diamond-importado-blanco-y-verde-0.jpg","img/tn/short-diamond-importado-blanco-y-verde-1.jpg","img/tn/short-diamond-importado-blanco-y-verde-2.jpg"],"v":[{"sku":"DIA-014","c":"BLANCO Y VERDE","t":"XL","q":1}]},{"id":"DIA-015","skus":["DIA-015"],"sold":0,"cmb":false,"up":false,"name":"Short importado Negro CW","cat":"Shorts","sub":"Short Diamond Importado","p":33600,"c":38200,"ph":["img/tn/short-diamond-importado-negro-cw-0.jpg","img/tn/short-diamond-importado-negro-cw-1.jpg","img/tn/short-diamond-importado-negro-cw-2.jpg","img/tn/short-diamond-importado-negro-cw-3.jpg"],"v":[{"sku":"DIA-015","c":"NEGRO CW","t":"XXL","q":1}]},{"id":"DIA-016","skus":["DIA-016"],"sold":0,"cmb":false,"up":false,"name":"Short importado Verde Militar","cat":"Shorts","sub":"Short Diamond Importado","p":33600,"c":38200,"ph":["img/tn/short-diamond-importado-verde-militar-0.jpg","img/tn/short-diamond-importado-verde-militar-1.jpg","img/tn/short-diamond-importado-verde-militar-2.jpg","img/tn/short-diamond-importado-verde-militar-3.jpg"],"v":[{"sku":"DIA-016","c":"VERDE MILITAR","t":"XXL","q":1}]},{"id":"DIA-017","skus":["DIA-017"],"sold":0,"cmb":false,"up":false,"name":"Short importado Negro con Rosa","cat":"Shorts","sub":"Short Diamond Importado","p":33600,"c":38200,"ph":["img/tn/short-diamond-importado-negro-con-rosa-0.jpg","img/tn/short-diamond-importado-negro-con-rosa-1.jpg"],"v":[{"sku":"DIA-017","c":"NEGRO CON ROSA","t":"XXL","q":1}]},{"id":"JOG-001","skus":["JOG-001"],"sold":1,"cmb":false,"up":false,"name":"Jogging premium Choco","cat":"Baggys y joggings","sub":"Joggings","p":42000,"c":47700,"ph":["img/tn/jogging-baggy-boss-0.jpg","img/tn/jogging-baggy-boss-1.jpg","img/tn/jogging-baggy-boss-2.jpg"],"v":[{"sku":"JOG-001","c":"CHOCOLATE","t":"L","q":1}]},{"id":"JOG-005","skus":["JOG-005","JOG-009"],"sold":5,"cmb":true,"up":false,"name":"Jogging Bassic Gris M","cat":"Baggys y joggings","sub":"Joggings","p":26900,"c":30600,"ph":["img/tn/jogging-baggy-bassic-0.jpg","img/tn/jogging-baggy-bassic-1.jpg","img/tn/jogging-baggy-bassic-2.jpg","img/tn/jogging-baggy-bassic-3.jpg"],"v":[{"sku":"JOG-005","c":"GIRS M","t":"S","q":4},{"sku":"JOG-009","c":"GRIS MELANGE","t":"L","q":1},{"sku":"JOG-009","c":"GRIS MELANGE","t":"M","q":0},{"sku":"JOG-009","c":"GRIS MELANGE","t":"XXL","q":0}]},{"id":"JOG-007","skus":["JOG-007"],"sold":1,"cmb":true,"up":false,"name":"Jogging Bassic Choco","cat":"Baggys y joggings","sub":"Joggings","p":26900,"c":30600,"ph":["img/tn/jogging-baggy-bassic-0.jpg","img/tn/jogging-baggy-bassic-1.jpg","img/tn/jogging-baggy-bassic-2.jpg","img/tn/jogging-baggy-bassic-3.jpg"],"v":[{"sku":"JOG-007","c":"CHOCOLATE","t":"M","q":0},{"sku":"JOG-007","c":"CHOCOLATE","t":"S","q":2}]},{"id":"JOG-011","skus":["JOG-011"],"sold":6,"cmb":true,"up":false,"name":"Jogging Bassic Negro","cat":"Baggys y joggings","sub":"Joggings","p":26900,"c":30600,"ph":["img/tn/jogging-baggy-bassic-0.jpg","img/tn/jogging-baggy-bassic-1.jpg","img/tn/jogging-baggy-bassic-2.jpg","img/tn/jogging-baggy-bassic-3.jpg"],"v":[{"sku":"JOG-011","c":"NEGRO","t":"L","q":0},{"sku":"JOG-011","c":"NEGRO","t":"M","q":0},{"sku":"JOG-011","c":"NEGRO","t":"XL","q":1},{"sku":"JOG-011","c":"NEGRO","t":"XXL","q":0}]},{"id":"JOG-015","skus":["JOG-015"],"sold":0,"cmb":true,"up":false,"name":"Jogging Bassic Gris Melange","cat":"Baggys y joggings","sub":"Joggings","p":26900,"c":30600,"ph":["img/tn/jogging-baggy-bassic-0.jpg","img/tn/jogging-baggy-bassic-1.jpg","img/tn/jogging-baggy-bassic-2.jpg","img/tn/jogging-baggy-bassic-3.jpg"],"v":[{"sku":"JOG-015","c":"GRIS MELANGE","t":"XL","q":3}]},{"id":"JOG-018","skus":["JOG-018"],"sold":3,"cmb":false,"up":false,"name":"Jogging pipa","cat":"Baggys y joggings","sub":"Joggings","p":37800,"c":43000,"ph":["img/jogging-pipa-0.jpg","img/jogging-pipa-1.jpg","img/jogging-pipa-2.jpg"],"v":[{"sku":"JOG-018","c":"GRIS MELANGE","t":"L","q":0},{"sku":"JOG-018","c":"GRIS MELANGE","t":"M","q":1},{"sku":"JOG-018","c":"GRIS MELANGE","t":"XL","q":0},{"sku":"JOG-018","c":"GRIS MELANGE","t":"XXL","q":0}]},{"id":"JOG-019","skus":["JOG-019","JOG-020"],"sold":4,"cmb":false,"up":false,"name":"Jogging tres líneas","cat":"Baggys y joggings","sub":"Joggings","p":37800,"c":43000,"ph":["img/jogging-tres-lineas-0.jpg","img/jogging-tres-lineas-1.jpg","img/jogging-tres-lineas-2.jpg"],"v":[{"sku":"JOG-019","c":"NEGRO","t":"L","q":0},{"sku":"JOG-019","c":"NEGRO","t":"M","q":1},{"sku":"JOG-019","c":"NEGRO","t":"XL","q":0},{"sku":"JOG-019","c":"NEGRO","t":"XXL","q":0},{"sku":"JOG-020","c":"GRIS MELANGE","t":"L","q":1},{"sku":"JOG-020","c":"GRIS MELANGE","t":"M","q":1},{"sku":"JOG-020","c":"GRIS MELANGE","t":"XL","q":0},{"sku":"JOG-020","c":"GRIS MELANGE","t":"XXL","q":0}]},{"id":"JOR-001","skus":["JOR-001"],"sold":0,"cmb":false,"up":false,"name":"Jort rústico Pecan","cat":"Bermudas","sub":"Jort Rústico","p":31800,"c":36100,"ph":[],"v":[{"sku":"JOR-001","c":"PECAN","t":"L","q":1}]},{"id":"MED-001","skus":["MED-001","MED-002","MED-004","MED-005","MED-006","MED-007","MED-008","MED-009","MED-010","MED-011","MED-012","MED-013","MED-014","MED-022","MED-023","MED-024","MED-025","MED-026","MED-040"],"sold":0,"cmb":true,"up":true,"name":"Medias","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-001","c":"GRIS","t":"ÚNICO","q":2},{"sku":"MED-002","c":"GRIS CARO","t":"ÚNICO","q":2},{"sku":"MED-004","c":"BLANCO","t":"ÚNICO","q":6},{"sku":"MED-005","c":"VERDE","t":"ÚNICO","q":2},{"sku":"MED-006","c":"AZUL","t":"ÚNICO","q":3},{"sku":"MED-007","c":"ROJO","t":"ÚNICO","q":1},{"sku":"MED-008","c":"ROSA","t":"ÚNICO","q":1},{"sku":"MED-009","c":"CELESTE PIPA NEGRA","t":"ÚNICO","q":1},{"sku":"MED-010","c":"MARRÓN PIPA NEGRA","t":"ÚNICO","q":1},{"sku":"MED-011","c":"NARANJA","t":"ÚNICO","q":1},{"sku":"MED-012","c":"CELESTE PIPA BLANCA","t":"ÚNICO","q":2},{"sku":"MED-013","c":"BEIGE PIPA ROSA","t":"ÚNICO","q":1},{"sku":"MED-014","c":"BEIGE PIPA MARRÓN","t":"ÚNICO","q":1},{"sku":"MED-022","c":"BLANCO","t":"ÚNICO","q":3},{"sku":"MED-023","c":"BLANCO","t":"ÚNICO","q":3},{"sku":"MED-024","c":"NEGRO","t":"ÚNICO","q":6},{"sku":"MED-025","c":"BYN","t":"ÚNICO","q":2},{"sku":"MED-026","c":"CELESTE","t":"ÚNICO","q":3},{"sku":"MED-040","c":"AZUL","t":"ÚNICO","q":1}]},{"id":"MED-015","skus":["MED-015","MED-016","MED-017","MED-018","MED-037","MED-038"],"sold":0,"cmb":true,"up":true,"name":"Medias 3 líneas","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-015","c":"AZUL","t":"ÚNICO","q":2},{"sku":"MED-016","c":"MARRÓN","t":"ÚNICO","q":1},{"sku":"MED-017","c":"VERDE","t":"ÚNICO","q":2},{"sku":"MED-018","c":"CELESTE","t":"ÚNICO","q":2},{"sku":"MED-037","c":"BLANCO Y ROJO","t":"ÚNICO","q":2},{"sku":"MED-038","c":"LAVANDA","t":"ÚNICO","q":3}]},{"id":"MED-019","skus":["MED-019","MED-031","MED-032"],"sold":0,"cmb":true,"up":false,"name":"Medias retro","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-019","c":"BLANCO","t":"ÚNICO","q":2},{"sku":"MED-031","c":"CREMA","t":"ÚNICO","q":1},{"sku":"MED-032","c":"CELESTE","t":"ÚNICO","q":1}]},{"id":"MED-027","skus":["MED-027"],"sold":0,"cmb":true,"up":false,"name":"Medias Sol","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-027","c":"AZUL","t":"ÚNICO","q":2}]},{"id":"MED-028","skus":["MED-028","MED-029","MED-030"],"sold":0,"cmb":true,"up":false,"name":"Medias línea","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-028","c":"VERDE","t":"ÚNICO","q":2},{"sku":"MED-029","c":"CELESTE","t":"ÚNICO","q":1},{"sku":"MED-030","c":"LILA","t":"ÚNICO","q":3}]},{"id":"MED-033","skus":["MED-033"],"sold":0,"cmb":true,"up":false,"name":"Medias classic","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-033","c":"BLANCO","t":"ÚNICO","q":3}]},{"id":"MED-034","skus":["MED-034"],"sold":0,"cmb":true,"up":false,"name":"Medias línea roja","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-034","c":"BLANCO","t":"ÚNICO","q":1}]},{"id":"MED-035","skus":["MED-035","MED-036"],"sold":0,"cmb":true,"up":false,"name":"Medias Cavs","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-035","c":"BLANCO","t":"ÚNICO","q":2},{"sku":"MED-036","c":"NEGRO","t":"ÚNICO","q":3}]},{"id":"MED-039","skus":["MED-039"],"sold":0,"cmb":true,"up":false,"name":"Medias escolares","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-039","c":"AZUL","t":"ÚNICO","q":3}]},{"id":"MED-041","skus":["MED-041"],"sold":0,"cmb":true,"up":false,"name":"Medias Lucky","cat":"Accesorios","sub":"Medias","p":4200,"c":4800,"ph":[],"v":[{"sku":"MED-041","c":"NEGRO","t":"ÚNICO","q":1}]},{"id":"MUS-001","skus":["MUS-001","MUS-002"],"sold":1,"cmb":true,"up":false,"name":"Musculosa Morley","cat":"Remeras","sub":"Musculosa","p":17900,"c":20300,"ph":["img/tn/musculosa-morley-0.jpg","img/tn/musculosa-morley-1.jpg","img/tn/musculosa-morley-2.jpg","img/tn/musculosa-morley-3.jpg"],"v":[{"sku":"MUS-001","c":"NEGRO","t":"L","q":1},{"sku":"MUS-001","c":"NEGRO","t":"M","q":1},{"sku":"MUS-001","c":"NEGRO","t":"S","q":1},{"sku":"MUS-002","c":"BLANCO","t":"XL","q":1}]},{"id":"NBA-001","skus":["NBA-001"],"sold":0,"cmb":true,"up":false,"name":"Short Celtics beige","cat":"Shorts","sub":"Short NBA","p":15400,"c":17500,"ph":[],"v":[{"sku":"NBA-001","c":"BEIGE","t":"S","q":1}]},{"id":"NBA-003","skus":["NBA-003"],"sold":0,"cmb":true,"up":false,"name":"Short River Potrero","cat":"Shorts","sub":"Short NBA","p":15400,"c":17500,"ph":[],"v":[{"sku":"NBA-003","c":"NEGRO","t":"S","q":1}]},{"id":"NBA-004","skus":["NBA-004"],"sold":0,"cmb":true,"up":false,"name":"Short Pistons","cat":"Shorts","sub":"Short NBA","p":15400,"c":17500,"ph":[],"v":[{"sku":"NBA-004","c":"CELESTE","t":"S","q":1}]},{"id":"NBA-005","skus":["NBA-005"],"sold":1,"cmb":true,"up":false,"name":"Short Lakers negro","cat":"Shorts","sub":"Short NBA","p":15400,"c":17500,"ph":["img/tn/short-nba-lakers-negro-0.jpg","img/tn/short-nba-lakers-negro-1.jpg","img/tn/short-nba-lakers-negro-2.jpg"],"v":[{"sku":"NBA-005","c":"NEGRO","t":"L","q":0},{"sku":"NBA-005","c":"NEGRO","t":"M","q":0},{"sku":"NBA-005","c":"NEGRO","t":"S","q":2}]},{"id":"NBA-006","skus":["NBA-006"],"sold":3,"cmb":true,"up":false,"name":"Short negro relamp","cat":"Shorts","sub":"Short NBA","p":15400,"c":17500,"ph":["img/tn/short-nba-jordan-negro-relamp-0.jpg","img/tn/short-nba-jordan-negro-relamp-1.jpg"],"v":[{"sku":"NBA-006","c":"BYN","t":"M","q":0},{"sku":"NBA-006","c":"BYN","t":"S","q":3}]},{"id":"NBA-007","skus":["NBA-007"],"sold":0,"cmb":true,"up":false,"name":"Short Raiders NFL","cat":"Shorts","sub":"Short NBA","p":15400,"c":17500,"ph":["img/tn/short-nba-raiders-nfl-0.jpg","img/tn/short-nba-raiders-nfl-1.jpg","img/tn/short-nba-raiders-nfl-2.jpg"],"v":[{"sku":"NBA-007","c":"GRIS","t":"S","q":6}]},{"id":"NBA-008","skus":["NBA-008"],"sold":3,"cmb":true,"up":false,"name":"Short celeste relamp","cat":"Shorts","sub":"Short NBA","p":15400,"c":17500,"ph":["img/tn/short-nba-jordan-celeste-relamp-0.jpg","img/tn/short-nba-jordan-celeste-relamp-1.jpg","img/tn/short-nba-jordan-celeste-relamp-2.jpg"],"v":[{"sku":"NBA-008","c":"CELESTE","t":"L","q":3},{"sku":"NBA-008","c":"CELESTE","t":"M","q":1},{"sku":"NBA-008","c":"CELESTE","t":"S","q":2},{"sku":"NBA-008","c":"CELESTE","t":"XL","q":2},{"sku":"NBA-008","c":"CELESTE","t":"XXL","q":0}]},{"id":"NBA-009","skus":["NBA-009"],"sold":0,"cmb":true,"up":false,"name":"Short Raptors","cat":"Shorts","sub":"Short NBA","p":15400,"c":17500,"ph":["img/tn/short-nba-raptors-0.jpg","img/tn/short-nba-raptors-1.jpg","img/tn/short-nba-raptors-2.jpg"],"v":[{"sku":"NBA-009","c":"BLANCO","t":"L","q":2},{"sku":"NBA-009","c":"BLANCO","t":"M","q":1},{"sku":"NBA-009","c":"BLANCO","t":"S","q":3},{"sku":"NBA-009","c":"BLANCO","t":"XXL","q":2}]},{"id":"NBA-013","skus":["NBA-013"],"sold":1,"cmb":true,"up":false,"name":"Short Lakers blanco","cat":"Shorts","sub":"Short NBA","p":15400,"c":17500,"ph":["img/tn/short-nba-lakers-blanco-0.jpg","img/tn/short-nba-lakers-blanco-1.jpg","img/tn/short-nba-lakers-blanco-2.jpg"],"v":[{"sku":"NBA-013","c":"BLANCO","t":"M","q":0},{"sku":"NBA-013","c":"BLANCO","t":"S","q":1},{"sku":"NBA-013","c":"BLANCO","t":"XXL","q":1}]},{"id":"NBA-015","skus":["NBA-015"],"sold":2,"cmb":true,"up":false,"name":"Short importado rojo","cat":"Shorts","sub":"Short NBA","p":13900,"c":15800,"ph":["img/tn/short-nba-jordan-diamond-0.jpg","img/tn/short-nba-jordan-diamond-1.jpg","img/tn/short-nba-jordan-diamond-2.jpg","img/tn/short-nba-jordan-diamond-3.jpg"],"v":[{"sku":"NBA-015","c":"ROJO","t":"L","q":0},{"sku":"NBA-015","c":"ROJO","t":"M","q":0},{"sku":"NBA-015","c":"ROJO","t":"S","q":0},{"sku":"NBA-015","c":"ROJO","t":"XL","q":1},{"sku":"NBA-015","c":"ROJO","t":"XXL","q":2}]},{"id":"NBA-016","skus":["NBA-016"],"sold":2,"cmb":true,"up":false,"name":"Short importado blanco","cat":"Shorts","sub":"Short NBA","p":13900,"c":15800,"ph":["img/tn/short-nba-jordan-diamond-0.jpg","img/tn/short-nba-jordan-diamond-1.jpg","img/tn/short-nba-jordan-diamond-2.jpg","img/tn/short-nba-jordan-diamond-3.jpg"],"v":[{"sku":"NBA-016","c":"BLANCO","t":"L","q":0},{"sku":"NBA-016","c":"BLANCO","t":"M","q":0},{"sku":"NBA-016","c":"BLANCO","t":"S","q":0},{"sku":"NBA-016","c":"BLANCO","t":"XL","q":1},{"sku":"NBA-016","c":"BLANCO","t":"XXL","q":2}]},{"id":"NBA-017","skus":["NBA-017"],"sold":2,"cmb":true,"up":false,"name":"Short importado negro","cat":"Shorts","sub":"Short NBA","p":13900,"c":15800,"ph":["img/tn/short-nba-jordan-diamond-0.jpg","img/tn/short-nba-jordan-diamond-1.jpg","img/tn/short-nba-jordan-diamond-2.jpg","img/tn/short-nba-jordan-diamond-3.jpg"],"v":[{"sku":"NBA-017","c":"NEGRO","t":"L","q":0},{"sku":"NBA-017","c":"NEGRO","t":"M","q":0},{"sku":"NBA-017","c":"NEGRO","t":"S","q":0},{"sku":"NBA-017","c":"NEGRO","t":"XL","q":0},{"sku":"NBA-017","c":"NEGRO","t":"XXL","q":1}]},{"id":"OJO-001","skus":["OJO-001","OJO-002","OJO-003","OJO-004"],"sold":0,"cmb":true,"up":false,"name":"Adilette","cat":"Calzado","sub":"Ojotas","p":22500,"c":25600,"ph":["img/tn/ojotas-adidas-adilette-0.jpg","img/tn/ojotas-adidas-adilette-1.jpg","img/tn/ojotas-adidas-adilette-2.jpg","img/tn/ojotas-adidas-adilette-3.jpg"],"v":[{"sku":"OJO-001","c":"NEGRO","t":"38","q":2},{"sku":"OJO-001","c":"NEGRO","t":"40","q":3},{"sku":"OJO-001","c":"NEGRO","t":"42","q":3},{"sku":"OJO-001","c":"NEGRO","t":"44","q":1},{"sku":"OJO-002","c":"BEIGE","t":"36","q":1},{"sku":"OJO-002","c":"BEIGE","t":"38","q":2},{"sku":"OJO-002","c":"BEIGE","t":"40","q":2},{"sku":"OJO-002","c":"BEIGE","t":"42","q":2},{"sku":"OJO-002","c":"BEIGE","t":"44","q":3},{"sku":"OJO-003","c":"GRIS","t":"38","q":1},{"sku":"OJO-003","c":"GRIS","t":"40","q":2},{"sku":"OJO-003","c":"GRIS","t":"42","q":4},{"sku":"OJO-003","c":"GRIS","t":"44","q":2},{"sku":"OJO-004","c":"VERDE","t":"38","q":1},{"sku":"OJO-004","c":"VERDE","t":"40","q":5},{"sku":"OJO-004","c":"VERDE","t":"42","q":4},{"sku":"OJO-004","c":"VERDE","t":"44","q":3}]},{"id":"PCJ-003","skus":["PCJ-003"],"sold":0,"cmb":false,"up":false,"name":"Conjunto tracksuite","cat":"Conjuntos","sub":"Conjuntos","p":59900,"c":68100,"ph":["img/tn/conjunto-nike-tracksuit-0.jpg","img/tn/conjunto-nike-tracksuit-1.jpg"],"v":[{"sku":"PCJ-003","c":"NEGRO","t":"XL","q":1},{"sku":"PCJ-003","c":"NEGRO","t":"XXL","q":1}]},{"id":"RDM-001","skus":["RDM-001","RDM-002"],"sold":0,"cmb":true,"up":false,"name":"Currently","cat":"Remeras","sub":"Remeras Doble Manga","p":23900,"c":27200,"ph":["img/tn/currently-0.jpg","img/tn/currently-1.jpg","img/tn/currently-2.jpg","img/tn/currently-3.jpg"],"v":[{"sku":"RDM-001","c":"GRIS TOPO","t":"S","q":1},{"sku":"RDM-002","c":"GRIS M","t":"M","q":1}]},{"id":"RDM-003","skus":["RDM-003"],"sold":0,"cmb":true,"up":false,"name":"Saintless","cat":"Remeras","sub":"Remeras Doble Manga","p":23900,"c":27200,"ph":["img/tn/saintless-0.jpg","img/tn/saintless-1.jpg","img/tn/saintless-2.jpg","img/tn/saintless-3.jpg"],"v":[{"sku":"RDM-003","c":"C-VERDE","t":"L","q":1}]},{"id":"REL-001","skus":["REL-001","REL-002","REL-003"],"sold":1,"cmb":true,"up":true,"name":"Wr Vintage Redondo","cat":"Accesorios","sub":"Relojes","p":18500,"c":21000,"ph":["img/tn/reloj-wr-vintage-0.jpg","img/tn/reloj-wr-vintage-1.jpg","img/tn/reloj-wr-vintage-2.jpg","img/tn/reloj-wr-vintage-3.jpg"],"v":[{"sku":"REL-001","c":"GRIS","t":"ÚNICO","q":6},{"sku":"REL-002","c":"NEGRO","t":"ÚNICO","q":1},{"sku":"REL-003","c":"ROSA","t":"ÚNICO","q":1}]},{"id":"REL-005","skus":["REL-005","REL-006"],"sold":1,"cmb":true,"up":true,"name":"Wr Vintage Cuadrado","cat":"Accesorios","sub":"Relojes","p":18500,"c":21000,"ph":["img/tn/reloj-wr-vintage-0.jpg","img/tn/reloj-wr-vintage-1.jpg","img/tn/reloj-wr-vintage-2.jpg","img/tn/reloj-wr-vintage-3.jpg"],"v":[{"sku":"REL-005","c":"NEGRO","t":"ÚNICO","q":1},{"sku":"REL-006","c":"ROSA","t":"ÚNICO","q":2}]},{"id":"REM-001","skus":["REM-001"],"sold":0,"cmb":true,"up":false,"name":"Stilness Boxy Fit","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/stilness-boxy-fit-0.jpg","img/tn/stilness-boxy-fit-1.jpg"],"v":[{"sku":"REM-001","c":"BLANCO","t":"L","q":1}]},{"id":"REM-002","skus":["REM-002"],"sold":0,"cmb":true,"up":false,"name":"Limit-Cemento Boxy Fit","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":[],"v":[{"sku":"REM-002","c":"","t":"M","q":1}]},{"id":"REM-003","skus":["REM-003"],"sold":0,"cmb":true,"up":false,"name":"Azul Lisa Boxy Fit","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/azul-lisa-boxy-fit-0.jpg","img/tn/azul-lisa-boxy-fit-1.jpg","img/tn/azul-lisa-boxy-fit-2.jpg","img/tn/azul-lisa-boxy-fit-3.jpg"],"v":[{"sku":"REM-003","c":"","t":"L","q":1}]},{"id":"REM-004","skus":["REM-004"],"sold":0,"cmb":true,"up":false,"name":"Street Blanca Boxy Fit","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/street-blanca-boxy-fit-0.jpg","img/tn/street-blanca-boxy-fit-1.jpg","img/tn/street-blanca-boxy-fit-2.jpg","img/tn/street-blanca-boxy-fit-3.jpg"],"v":[{"sku":"REM-004","c":"","t":"M","q":1}]},{"id":"REM-005","skus":["REM-005"],"sold":0,"cmb":true,"up":false,"name":"Hawk Tour White Boxy Fit","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/hawk-tour-white-boxy-fit-0.jpg","img/tn/hawk-tour-white-boxy-fit-1.jpg","img/tn/hawk-tour-white-boxy-fit-2.jpg"],"v":[{"sku":"REM-005","c":"","t":"L","q":1},{"sku":"REM-005","c":"","t":"S","q":1}]},{"id":"REM-006","skus":["REM-006"],"sold":0,"cmb":true,"up":false,"name":"Hawk Tour Black","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/hawk-tour-black-0.jpg","img/tn/hawk-tour-black-1.jpg","img/tn/hawk-tour-black-2.jpg","img/tn/hawk-tour-black-3.jpg"],"v":[{"sku":"REM-006","c":"","t":"XL","q":1}]},{"id":"REM-007","skus":["REM-007"],"sold":0,"cmb":true,"up":false,"name":"Barca","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/barca-0.jpg","img/tn/barca-1.jpg","img/tn/barca-2.jpg","img/tn/barca-3.jpg"],"v":[{"sku":"REM-007","c":"","t":"S","q":1}]},{"id":"REM-008","skus":["REM-008"],"sold":0,"cmb":true,"up":false,"name":"Sda Araña","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/sda-arana1-0.jpg","img/tn/sda-arana1-1.jpg","img/tn/sda-arana1-2.jpg","img/tn/sda-arana1-3.jpg"],"v":[{"sku":"REM-008","c":"","t":"M","q":1},{"sku":"REM-008","c":"","t":"XL","q":1}]},{"id":"REM-010","skus":["REM-010"],"sold":1,"cmb":true,"up":false,"name":"Benito 10","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/benito-10-0.jpg","img/tn/benito-10-1.jpg","img/tn/benito-10-2.jpg","img/tn/benito-10-3.jpg"],"v":[{"sku":"REM-010","c":"","t":"L","q":1},{"sku":"REM-010","c":"","t":"M","q":1},{"sku":"REM-010","c":"","t":"XL","q":1}]},{"id":"REM-012","skus":["REM-012"],"sold":0,"cmb":true,"up":false,"name":"Alemania","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/alemania-0.jpg","img/tn/alemania-1.jpg","img/tn/alemania-2.jpg"],"v":[{"sku":"REM-012","c":"","t":"M","q":1}]},{"id":"REM-013","skus":["REM-013"],"sold":0,"cmb":false,"up":false,"name":"Seven","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/seven-0.jpg","img/tn/seven-1.jpg","img/tn/seven-2.jpg","img/tn/seven-3.jpg"],"v":[{"sku":"REM-013","c":"","t":"S","q":0},{"sku":"REM-013","c":"","t":"XL","q":1}]},{"id":"REM-015","skus":["REM-015"],"sold":0,"cmb":false,"up":false,"name":"Grey 34","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/grey-34-0.jpg","img/tn/grey-34-1.jpg","img/tn/grey-34-2.jpg"],"v":[{"sku":"REM-015","c":"","t":"L","q":0},{"sku":"REM-015","c":"","t":"XL","q":1}]},{"id":"REM-017","skus":["REM-017","REM-018","REM-020"],"sold":0,"cmb":false,"up":false,"name":"All Starr","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/all-stars-0.jpg","img/tn/all-stars-1.jpg","img/tn/all-stars-2.jpg","img/tn/all-stars-3.jpg"],"v":[{"sku":"REM-017","c":"GRIS","t":"ÚNICO","q":2},{"sku":"REM-018","c":"ROSA","t":"ÚNICO","q":1},{"sku":"REM-020","c":"AZUL","t":"ÚNICO","q":1}]},{"id":"REM-023","skus":["REM-023","REM-027"],"sold":1,"cmb":true,"up":false,"name":"Boxys Streetwise","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/boxys-streetwise-0.jpg","img/tn/boxys-streetwise-1.jpg","img/tn/boxys-streetwise-2.jpg","img/tn/boxys-streetwise-3.jpg"],"v":[{"sku":"REM-023","c":"GRIS OSCURO","t":"L","q":1},{"sku":"REM-023","c":"GRIS OSCURO","t":"M","q":1},{"sku":"REM-027","c":"MÁRMOL","t":"L","q":1},{"sku":"REM-027","c":"MÁRMOL","t":"M","q":0}]},{"id":"REM-024","skus":["REM-024","REM-025","REM-028"],"sold":0,"cmb":true,"up":false,"name":"Chomba fardo","cat":"Remeras","sub":"Remeras","p":23000,"c":26100,"ph":["img/tn/chomba-fardo-nike-0.jpg","img/tn/chomba-fardo-nike-1.jpg","img/tn/chomba-fardo-nike-2.jpg","img/tn/chomba-fardo-nike-3.jpg"],"v":[{"sku":"REM-024","c":"","t":"L","q":1},{"sku":"REM-025","c":"","t":"L","q":1},{"sku":"REM-028","c":"","t":"L","q":1}]},{"id":"REM-030","skus":["REM-030","REM-031"],"sold":0,"cmb":true,"up":false,"name":"Champagne","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/champagne-0.jpg","img/tn/champagne-1.jpg","img/tn/champagne-2.jpg","img/tn/champagne-3.jpg"],"v":[{"sku":"REM-030","c":"CHOCOLATE","t":"S","q":1},{"sku":"REM-031","c":"NATURAL","t":"L","q":2}]},{"id":"REM-032","skus":["REM-032","REM-033"],"sold":1,"cmb":true,"up":false,"name":"Dvsstudio","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/dvsstudio-0.jpg","img/tn/dvsstudio-1.jpg","img/tn/dvsstudio-2.jpg","img/tn/dvsstudio-3.jpg"],"v":[{"sku":"REM-032","c":"MÁRMOL","t":"L","q":1},{"sku":"REM-032","c":"MÁRMOL","t":"M","q":1},{"sku":"REM-033","c":"NEGRO","t":"M","q":0},{"sku":"REM-033","c":"NEGRO","t":"S","q":1}]},{"id":"REM-034","skus":["REM-034","REM-035","REM-036"],"sold":0,"cmb":true,"up":false,"name":"Coachela","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/coachela-0.jpg","img/tn/coachela-1.jpg","img/tn/coachela-2.jpg","img/tn/coachela-3.jpg"],"v":[{"sku":"REM-034","c":"GRIS OSCURO","t":"L","q":1},{"sku":"REM-035","c":"CHOCOLATE","t":"L","q":1},{"sku":"REM-036","c":"NATURAL","t":"S","q":1}]},{"id":"REM-037","skus":["REM-037","REM-038"],"sold":1,"cmb":true,"up":false,"name":"Over Bassic","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/over-bassic-0.jpg","img/tn/over-bassic-1.jpg","img/tn/over-bassic-2.jpg","img/tn/over-bassic-3.jpg"],"v":[{"sku":"REM-037","c":"GRIS OSCURO","t":"M","q":1},{"sku":"REM-037","c":"GRIS OSCURO","t":"S","q":2},{"sku":"REM-038","c":"NEGRO","t":"M","q":1}]},{"id":"REM-039","skus":["REM-039"],"sold":1,"cmb":true,"up":false,"name":"Polo Confidence","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/polo-confidence-0.jpg","img/tn/polo-confidence-1.jpg","img/tn/polo-confidence-2.jpg"],"v":[{"sku":"REM-039","c":"AZUL","t":"M","q":1},{"sku":"REM-039","c":"AZUL","t":"S","q":0}]},{"id":"REM-041","skus":["REM-041"],"sold":1,"cmb":true,"up":false,"name":"Sparky","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/sparky-0.jpg","img/tn/sparky-1.jpg","img/tn/sparky-2.jpg"],"v":[{"sku":"REM-041","c":"PECAN","t":"M","q":1},{"sku":"REM-041","c":"PECAN","t":"S","q":0}]},{"id":"REM-043","skus":["REM-043","REM-044"],"sold":0,"cmb":true,"up":false,"name":"Cuello V","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/cuello-v-0.jpg","img/tn/cuello-v-1.jpg","img/tn/cuello-v-2.jpg","img/tn/cuello-v-3.jpg"],"v":[{"sku":"REM-043","c":"AZUL","t":"M","q":1},{"sku":"REM-043","c":"AZUL","t":"S","q":1},{"sku":"REM-044","c":"BLANCO","t":"M","q":1}]},{"id":"REM-045","skus":["REM-045","REM-059"],"sold":3,"cmb":true,"up":false,"name":"NBA Bassic Flight","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/nba-bassic-flight-0.jpg","img/tn/nba-bassic-flight-1.jpg","img/tn/nba-bassic-flight-2.jpg","img/tn/nba-bassic-flight-3.jpg"],"v":[{"sku":"REM-045","c":"ROJO","t":"L","q":0},{"sku":"REM-045","c":"ROJO","t":"XL","q":1},{"sku":"REM-059","c":"NEGRO","t":"L","q":0},{"sku":"REM-059","c":"NEGRO","t":"XL","q":1},{"sku":"REM-059","c":"NEGRO","t":"XXL","q":1}]},{"id":"REM-046","skus":["REM-046","REM-047"],"sold":3,"cmb":true,"up":false,"name":"NBA Bassic Diagonal","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/nba-bassic-jordan-diagonal-0.jpg","img/tn/nba-bassic-jordan-diagonal-1.jpg","img/tn/nba-bassic-jordan-diagonal-2.jpg","img/tn/nba-bassic-jordan-diagonal-3.jpg"],"v":[{"sku":"REM-046","c":"BLANCO","t":"M","q":0},{"sku":"REM-046","c":"BLANCO","t":"XL","q":1},{"sku":"REM-047","c":"NEGRO","t":"M","q":0},{"sku":"REM-047","c":"NEGRO","t":"XL","q":1},{"sku":"REM-047","c":"NEGRO","t":"XXL","q":1}]},{"id":"REM-049","skus":["REM-049"],"sold":2,"cmb":true,"up":false,"name":"NBA Bassic Air","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/nba-bassic-jordan-air-0.jpg","img/tn/nba-bassic-jordan-air-1.jpg","img/tn/nba-bassic-jordan-air-2.jpg"],"v":[{"sku":"REM-049","c":"NEGRO","t":"L","q":0},{"sku":"REM-049","c":"NEGRO","t":"M","q":1},{"sku":"REM-049","c":"NEGRO","t":"XL","q":2},{"sku":"REM-049","c":"NEGRO","t":"XXL","q":1}]},{"id":"REM-052","skus":["REM-052"],"sold":1,"cmb":false,"up":false,"name":"NBA Full Estampa Champion","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/nba-full-estampa-champion-0.jpg","img/tn/nba-full-estampa-champion-1.jpg","img/tn/nba-full-estampa-champion-2.jpg","img/tn/nba-full-estampa-champion-3.jpg"],"v":[{"sku":"REM-052","c":"NEGRO","t":"XL","q":0},{"sku":"REM-052","c":"NEGRO","t":"XXL","q":1}]},{"id":"REM-061","skus":["REM-061"],"sold":0,"cmb":false,"up":false,"name":"NBA Full Estampa Bulls","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/nba-full-estampa-jordan-bulls-0.jpg","img/tn/nba-full-estampa-jordan-bulls-1.jpg","img/tn/nba-full-estampa-jordan-bulls-2.jpg","img/tn/nba-full-estampa-jordan-bulls-3.jpg"],"v":[{"sku":"REM-061","c":"NEGRO","t":"XL","q":1},{"sku":"REM-061","c":"NEGRO","t":"XXL","q":1}]},{"id":"REM-062","skus":["REM-062","REM-063","REM-064"],"sold":0,"cmb":true,"up":false,"name":"Mac Miller Boxy Fit","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/mac-miller-boxy-fit-0.jpg","img/tn/mac-miller-boxy-fit-1.jpg","img/tn/mac-miller-boxy-fit-2.jpg","img/tn/mac-miller-boxy-fit-3.jpg"],"v":[{"sku":"REM-062","c":"CREMA CON ROJO","t":"XL","q":1},{"sku":"REM-063","c":"NEGRO","t":"L","q":1},{"sku":"REM-064","c":"BLANCO","t":"L","q":1}]},{"id":"REM-065","skus":["REM-065"],"sold":0,"cmb":true,"up":false,"name":"Tyler Boxy Fit","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/tyler-boxy-fit-0.jpg","img/tn/tyler-boxy-fit-1.jpg","img/tn/tyler-boxy-fit-2.jpg","img/tn/tyler-boxy-fit-3.jpg"],"v":[{"sku":"REM-065","c":"CREMA","t":"L","q":1},{"sku":"REM-065","c":"CREMA","t":"XL","q":2}]},{"id":"REM-066","skus":["REM-066","REM-067"],"sold":0,"cmb":true,"up":false,"name":"Drake Boxy Fit","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/drake-boxy-fit-0.jpg","img/tn/drake-boxy-fit-1.jpg","img/tn/drake-boxy-fit-2.jpg","img/tn/drake-boxy-fit-3.jpg"],"v":[{"sku":"REM-066","c":"ROJO","t":"L","q":1},{"sku":"REM-066","c":"ROJO","t":"XL","q":1},{"sku":"REM-067","c":"NEGRO","t":"XL","q":1}]},{"id":"REM-068","skus":["REM-068"],"sold":0,"cmb":true,"up":false,"name":"Blessed Boxy Fit","cat":"Remeras","sub":"Remeras","p":24640,"c":28000,"ph":["img/tn/blessed-boxy-fit-0.jpg","img/tn/blessed-boxy-fit-1.jpg","img/tn/blessed-boxy-fit-2.jpg","img/tn/blessed-boxy-fit-3.jpg"],"v":[{"sku":"REM-068","c":"NEGRO","t":"M","q":1}]},{"id":"SHO-004","skus":["SHO-004"],"sold":1,"cmb":true,"up":false,"name":"Short fardo negro detalle","cat":"Shorts","sub":"Short","p":20000,"c":22700,"ph":["img/tn/short-nike-negro-og-vintage-0.jpg","img/tn/short-nike-negro-og-vintage-1.jpg","img/tn/short-nike-negro-og-vintage-2.jpg","img/tn/short-nike-negro-og-vintage-3.jpg"],"v":[{"sku":"SHO-004","c":"NEGRO","t":"XL","q":1}]},{"id":"SHO-005","skus":["SHO-005"],"sold":0,"cmb":true,"up":false,"name":"Short fardo 3 líneas","cat":"Shorts","sub":"Short","p":20000,"c":22700,"ph":["img/tn/short-adidas-3-tiras-og-vintage-0.jpg","img/tn/short-adidas-3-tiras-og-vintage-1.jpg","img/tn/short-adidas-3-tiras-og-vintage-2.jpg","img/tn/short-adidas-3-tiras-og-vintage-3.jpg"],"v":[{"sku":"SHO-005","c":"BLANCO","t":"S","q":1}]},{"id":"SHO-010","skus":["SHO-010"],"sold":0,"cmb":true,"up":false,"name":"Short fardo big pipa","cat":"Shorts","sub":"Short","p":24000,"c":27300,"ph":["img/tn/short-nike-gris-big-pipa-vintage-0.jpg","img/tn/short-nike-gris-big-pipa-vintage-1.jpg","img/tn/short-nike-gris-big-pipa-vintage-2.jpg","img/tn/short-nike-gris-big-pipa-vintage-3.jpg"],"v":[{"sku":"SHO-010","c":"GRIS","t":"L","q":1}]},{"id":"ZAP-001","skus":["ZAP-001"],"sold":0,"cmb":false,"up":false,"name":"KNU Caramel","cat":"Calzado","sub":"Zapatillas","p":48900,"c":55600,"ph":["img/tn/knu-caramel-0.jpg","img/tn/knu-caramel-1.jpg"],"v":[{"sku":"ZAP-001","c":"","t":"39","q":1}]},{"id":"ZAP-003","skus":["ZAP-003"],"sold":0,"cmb":false,"up":false,"name":"SB Royal","cat":"Calzado","sub":"Zapatillas","p":48900,"c":55600,"ph":["img/tn/nike-sb-jordan-royal-0.jpg","img/tn/nike-sb-jordan-royal-1.jpg","img/tn/nike-sb-jordan-royal-2.jpg"],"v":[{"sku":"ZAP-003","c":"","t":"38","q":1},{"sku":"ZAP-003","c":"","t":"39","q":1},{"sku":"ZAP-003","c":"","t":"41","q":1}]},{"id":"ZAP-004","skus":["ZAP-004"],"sold":0,"cmb":false,"up":false,"name":"SB Grey","cat":"Calzado","sub":"Zapatillas","p":55000,"c":62500,"ph":["img/tn/nike-sb-jordan-grey-0.jpg","img/tn/nike-sb-jordan-grey-1.jpg","img/tn/nike-sb-jordan-grey-2.jpg","img/tn/nike-sb-jordan-grey-3.jpg"],"v":[{"sku":"ZAP-004","c":"","t":"39","q":1}]},{"id":"ZAP-005","skus":["ZAP-005"],"sold":0,"cmb":false,"up":false,"name":"SB Varsity","cat":"Calzado","sub":"Zapatillas","p":48900,"c":55600,"ph":["img/tn/nike-sb-varsity-0.jpg","img/tn/nike-sb-varsity-1.jpg","img/tn/nike-sb-varsity-2.jpg"],"v":[{"sku":"ZAP-005","c":"","t":"41","q":2}]},{"id":"ZAP-008","skus":["ZAP-008"],"sold":0,"cmb":false,"up":false,"name":"KNU Total White","cat":"Calzado","sub":"Zapatillas","p":48900,"c":55600,"ph":["img/tn/knu-total-white-0.jpg","img/tn/knu-total-white-1.jpg","img/tn/knu-total-white-2.jpg"],"v":[{"sku":"ZAP-008","c":"","t":"34","q":1}]},{"id":"ZAP-009","skus":["ZAP-009"],"sold":0,"cmb":false,"up":false,"name":"Samba Pink","cat":"Calzado","sub":"Zapatillas","p":48900,"c":55600,"ph":["img/tn/samba-pink-0.jpg","img/tn/samba-pink-1.jpg"],"v":[{"sku":"ZAP-009","c":"","t":"34","q":1}]},{"id":"ZAP-011","skus":["ZAP-011"],"sold":3,"cmb":false,"up":false,"name":"Retro Running","cat":"Calzado","sub":"Zapatillas","p":55000,"c":62500,"ph":["img/tn/nike-retro-running-0.jpg","img/tn/nike-retro-running-1.jpg","img/tn/nike-retro-running-2.jpg","img/tn/nike-retro-running-3.jpg"],"v":[{"sku":"ZAP-011","c":"","t":"38","q":1},{"sku":"ZAP-011","c":"","t":"39","q":2},{"sku":"ZAP-011","c":"","t":"40","q":0},{"sku":"ZAP-011","c":"","t":"41","q":2},{"sku":"ZAP-011","c":"","t":"42","q":0},{"sku":"ZAP-011","c":"","t":"43","q":1}]},{"id":"ZAP-012","skus":["ZAP-012"],"sold":0,"cmb":false,"up":false,"name":"SB Gris","cat":"Calzado","sub":"Zapatillas","p":55000,"c":62500,"ph":["img/tn/nike-sb-gris-0.jpg","img/tn/nike-sb-gris-1.jpg","img/tn/nike-sb-gris-2.jpg","img/tn/nike-sb-gris-3.jpg"],"v":[{"sku":"ZAP-012","c":"","t":"43","q":1}]},{"id":"ZAP-013","skus":["ZAP-013"],"sold":0,"cmb":false,"up":false,"name":"Samba Classic","cat":"Calzado","sub":"Zapatillas","p":55000,"c":62500,"ph":["img/tn/samba-classic-0.jpg","img/tn/samba-classic-1.jpg","img/tn/samba-classic-2.jpg"],"v":[{"sku":"ZAP-013","c":"","t":"43","q":1}]},{"id":"ZAP-014","skus":["ZAP-014"],"sold":0,"cmb":false,"up":false,"name":"KNU Total Black","cat":"Calzado","sub":"Zapatillas","p":55000,"c":62500,"ph":["img/tn/knu-total-black-0.jpg","img/tn/knu-total-black-1.jpg","img/tn/knu-total-black-2.jpg","img/tn/knu-total-black-3.jpg"],"v":[{"sku":"ZAP-014","c":"","t":"38","q":0},{"sku":"ZAP-014","c":"","t":"39","q":1},{"sku":"ZAP-014","c":"","t":"40","q":2},{"sku":"ZAP-014","c":"","t":"41","q":0},{"sku":"ZAP-014","c":"","t":"42","q":0}]},{"id":"ZAP-016","skus":["ZAP-016"],"sold":0,"cmb":false,"up":false,"name":"AF1 x Nocta","cat":"Calzado","sub":"Zapatillas","p":55000,"c":62500,"ph":["img/tn/nike-af1-x-nocta-0.jpg","img/tn/nike-af1-x-nocta-1.jpg","img/tn/nike-af1-x-nocta-2.jpg","img/tn/nike-af1-x-nocta-3.jpg"],"v":[{"sku":"ZAP-016","c":"","t":"38","q":0},{"sku":"ZAP-016","c":"","t":"40","q":1},{"sku":"ZAP-016","c":"","t":"41","q":1},{"sku":"ZAP-016","c":"","t":"42","q":1}]},{"id":"TN-COL-SKINNY","skus":["TN-COL-SKINNY"],"sold":0,"cmb":false,"up":true,"name":"Collar Skinny","cat":"Accesorios","sub":"Accesorios","p":4000,"c":4600,"ph":["img/tn/collar-skinny-0.jpg","img/tn/collar-skinny-1.jpg","img/tn/collar-skinny-2.jpg","img/tn/collar-skinny-3.jpg"],"v":[{"sku":"TN-COL-SKINNY-001","c":"Modelo 001","t":"Único","q":1},{"sku":"TN-COL-SKINNY-002","c":"Modelo 002","t":"Único","q":1},{"sku":"TN-COL-SKINNY-003","c":"Modelo 003","t":"Único","q":1},{"sku":"TN-COL-SKINNY-004","c":"Modelo 004","t":"Único","q":1},{"sku":"TN-COL-SKINNY-005","c":"Modelo 005","t":"Único","q":1},{"sku":"TN-COL-SKINNY-006","c":"Modelo 006","t":"Único","q":1},{"sku":"TN-COL-SKINNY-007","c":"Modelo 007","t":"Único","q":1},{"sku":"TN-COL-SKINNY-008","c":"Modelo 008","t":"Único","q":1},{"sku":"TN-COL-SKINNY-009","c":"Modelo 009","t":"Único","q":1},{"sku":"TN-COL-SKINNY-010","c":"Modelo 010","t":"Único","q":1},{"sku":"TN-COL-SKINNY-011","c":"Modelo 011","t":"Único","q":1}]},{"id":"TN-COL-MEDIUM","skus":["TN-COL-MEDIUM"],"sold":0,"cmb":false,"up":false,"name":"Collar Médium","cat":"Accesorios","sub":"Accesorios","p":8000,"c":9100,"ph":["img/tn/collar-medium-0.jpg","img/tn/collar-medium-1.jpg","img/tn/collar-medium-2.jpg","img/tn/collar-medium-3.jpg"],"v":[{"sku":"TN-COL-MEDIUM-001","c":"Modelo 001","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-002","c":"Modelo 002","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-003","c":"Modelo 003","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-004","c":"Modelo 004","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-005","c":"Modelo 005","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-006","c":"Modelo 006","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-007","c":"Modelo 007","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-008","c":"Modelo 008","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-009","c":"Modelo 009","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-010","c":"Modelo 010","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-011","c":"Modelo 011","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-012","c":"Modelo 012","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-013","c":"Modelo 013","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-014","c":"Modelo 014","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-015","c":"Modelo 015","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-016","c":"Modelo 016","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-017","c":"Modelo 017","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-018","c":"Modelo 018","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-019","c":"Modelo 019","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-020","c":"Modelo 020","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-021","c":"Modelo 021","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-022","c":"Modelo 022","t":"Único","q":1},{"sku":"TN-COL-MEDIUM-023","c":"Modelo 023","t":"Único","q":1}]},{"id":"TN-COL-BIG","skus":["TN-COL-BIG"],"sold":0,"cmb":false,"up":false,"name":"Collar Big","cat":"Accesorios","sub":"Accesorios","p":15000,"c":17100,"ph":["img/tn/collar-big-0.jpg","img/tn/collar-big-1.jpg","img/tn/collar-big-2.jpg","img/tn/collar-big-3.jpg"],"v":[{"sku":"TN-COL-BIG-001","c":"Modelo 001","t":"Único","q":1},{"sku":"TN-COL-BIG-002","c":"Modelo 002","t":"Único","q":1},{"sku":"TN-COL-BIG-003","c":"Modelo 003","t":"Único","q":1},{"sku":"TN-COL-BIG-004","c":"Modelo 004","t":"Único","q":1},{"sku":"TN-COL-BIG-005","c":"Modelo 005","t":"Único","q":1},{"sku":"TN-COL-BIG-006","c":"Modelo 006","t":"Único","q":1},{"sku":"TN-COL-BIG-007","c":"Modelo 007","t":"Único","q":1},{"sku":"TN-COL-BIG-008","c":"Modelo 008","t":"Único","q":1},{"sku":"TN-COL-BIG-009","c":"Modelo 009","t":"Único","q":1}]},{"id":"TN-PULSERA","skus":["TN-PULSERA"],"sold":0,"cmb":false,"up":true,"name":"Pulsera","cat":"Accesorios","sub":"Accesorios","p":3800,"c":4400,"ph":["img/tn/pulsera-0.jpg","img/tn/pulsera-1.jpg","img/tn/pulsera-2.jpg","img/tn/pulsera-3.jpg"],"v":[{"sku":"TN-PULSERA-001","c":"Modelo 001","t":"Único","q":1},{"sku":"TN-PULSERA-002","c":"Modelo 002","t":"Único","q":1},{"sku":"TN-PULSERA-003","c":"Modelo 003","t":"Único","q":1},{"sku":"TN-PULSERA-004","c":"Modelo 004","t":"Único","q":1},{"sku":"TN-PULSERA-005","c":"Modelo 005","t":"Único","q":1},{"sku":"TN-PULSERA-006","c":"Modelo 006","t":"Único","q":1},{"sku":"TN-PULSERA-007","c":"Modelo 007","t":"Único","q":1},{"sku":"TN-PULSERA-008","c":"Modelo 008","t":"Único","q":1},{"sku":"TN-PULSERA-009","c":"Modelo 009","t":"Único","q":1},{"sku":"TN-PULSERA-010","c":"Modelo 010","t":"Único","q":1},{"sku":"TN-PULSERA-011","c":"Modelo 011","t":"Único","q":1},{"sku":"TN-PULSERA-012","c":"Modelo 012","t":"Único","q":1},{"sku":"TN-PULSERA-013","c":"Modelo 013","t":"Único","q":1},{"sku":"TN-PULSERA-014","c":"Modelo 014","t":"Único","q":1},{"sku":"TN-PULSERA-015","c":"Modelo 015","t":"Único","q":1},{"sku":"TN-PULSERA-016","c":"Modelo 016","t":"Único","q":1},{"sku":"TN-PULSERA-017","c":"Modelo 017","t":"Único","q":1},{"sku":"TN-PULSERA-018","c":"Modelo 018","t":"Único","q":1},{"sku":"TN-PULSERA-019","c":"Modelo 019","t":"Único","q":1},{"sku":"TN-PULSERA-020","c":"Modelo 020","t":"Único","q":1},{"sku":"TN-PULSERA-021","c":"Modelo 021","t":"Único","q":1},{"sku":"TN-PULSERA-022","c":"Modelo 022","t":"Único","q":1},{"sku":"TN-PULSERA-023","c":"Modelo 023","t":"Único","q":1},{"sku":"TN-PULSERA-024","c":"Modelo 024","t":"Único","q":1},{"sku":"TN-PULSERA-025","c":"Modelo 025","t":"Único","q":1},{"sku":"TN-PULSERA-026","c":"Modelo 026","t":"Único","q":1}]},{"id":"TN-BOX4","skus":["TN-BOX4"],"sold":0,"cmb":false,"up":true,"name":"Box de medias x4","cat":"Accesorios","sub":"Accesorios","p":15500,"c":17700,"ph":["img/tn/box-medias-x4-0.jpg","img/tn/box-medias-x4-1.jpg","img/tn/box-medias-x4-2.jpg","img/tn/box-medias-x4-3.jpg"],"v":[{"sku":"TN-BOX4-Street","c":"Modelo Street","t":"Único","q":9},{"sku":"TN-BOX4-Clean","c":"Modelo Clean","t":"Único","q":9},{"sku":"TN-BOX4-Full black","c":"Modelo Full black","t":"Único","q":9},{"sku":"TN-BOX4-Sport","c":"Modelo Sport","t":"Único","q":9},{"sku":"TN-BOX4-Full Nike","c":"Modelo Full Nike","t":"Único","q":9}]},{"id":"TN-BOX6","skus":["TN-BOX6"],"sold":0,"cmb":false,"up":false,"name":"Box de medias x6","cat":"Accesorios","sub":"Accesorios","p":19800,"c":22500,"ph":["img/tn/box-medias-x6-0.jpg","img/tn/box-medias-x6-1.jpg","img/tn/box-medias-x6-2.jpg","img/tn/box-medias-x6-3.jpg"],"v":[{"sku":"TN-BOX6-Street","c":"Modelo Street","t":"Único","q":9},{"sku":"TN-BOX6-Clean","c":"Modelo Clean","t":"Único","q":9},{"sku":"TN-BOX6-Full black","c":"Modelo Full black","t":"Único","q":9},{"sku":"TN-BOX6-Sport","c":"Modelo Sport","t":"Único","q":9},{"sku":"TN-BOX6-Full Nike","c":"Modelo Full Nike","t":"Único","q":9}]},{"id":"TN-BOX9","skus":["TN-BOX9"],"sold":0,"cmb":false,"up":false,"name":"Box de medias x9","cat":"Accesorios","sub":"Accesorios","p":26900,"c":30600,"ph":["img/tn/box-medias-x9-0.jpg","img/tn/box-medias-x9-1.jpg","img/tn/box-medias-x9-2.jpg","img/tn/box-medias-x9-3.jpg"],"v":[{"sku":"TN-BOX9-Street","c":"Modelo Street","t":"Único","q":9},{"sku":"TN-BOX9-Clean","c":"Modelo Clean","t":"Único","q":9},{"sku":"TN-BOX9-Clean 2.0","c":"Modelo Clean 2.0","t":"Único","q":9},{"sku":"TN-BOX9-Full black","c":"Modelo Full black","t":"Único","q":9},{"sku":"TN-BOX9-Sport","c":"Modelo Sport","t":"Único","q":9},{"sku":"TN-BOX9-Full Nike","c":"Modelo Full Nike","t":"Único","q":9}]}];
+/* stock en vivo: stock.json lo regenera la sincronización con la app Bona Gestión; si no está, se usa el stock embebido */
+(function(){try{const x=new XMLHttpRequest();x.open("GET","stock.json?t="+Date.now(),false);x.send();if(x.status===200){const S=JSON.parse(x.responseText).s;DATA.forEach(d=>d.v.forEach(v=>{const k=v.sku+"|"+v.t;if(k in S)v.q=S[k]}))}}catch(e){}
+DATA.forEach(d=>{d.v=d.v.filter(v=>v.q>0)});for(let i=DATA.length-1;i>=0;i--)if(!DATA[i].v.length)DATA.splice(i,1)})();
+const $=q=>document.querySelector(q);
+const money=n=>"$"+Math.round(n).toLocaleString("es-AR");
+const r100=n=>Math.round(n/100)*100;
+const tierPct=n=>n>=20?.32:n>=10?.23:n>=3?.15:0;
+const byId=id=>DATA.find(d=>d.id===id);
+const PACK=.10;
+function photo(d,i,alt){
+  const fb=`<div class="fb">${d.name}</div>`;
+  const src=d.ph&&d.ph[i||0];
+  return src?fb+`<img src="${src}" alt="${alt||d.name}" loading="lazy" decoding="async" onerror="this.remove()">`:fb;
+}
+const num=k=>+k.split("-")[1];
+/* ---------- combos (precios fijos de Luchi, efectivo o transferencia, sin descuento por cantidad) ---------- */
+const COMBOS=[
+ {k:"eco",n:"Combo Económico",d:"Bermuda baggy jogging + remera",price:33500,lo:14,hi:28},
+ {k:"prem",n:"Combo Premium",d:"Bermuda baggy pocket + remera",price:47900,lo:29,hi:29},
+ {k:"denim",n:"Combo Denim",d:"Bermuda baggy de jean + remera",price:58900,lo:1,hi:13}
+];
+const inCombo=(d,c)=>d.skus.some(k=>k.startsWith("BER-")&&num(k)>=c.lo&&num(k)<=c.hi);
+const comboOf=d=>COMBOS.find(c=>inCombo(d,c));
+const bermudasOf=c=>DATA.filter(d=>inCombo(d,c)).sort((x,y)=>y.ph.length-x.ph.length);
+const remeras=()=>DATA.filter(d=>d.cat==="Remeras"&&d.cmb&&d.v.length&&!/Morley/i.test(d.name)).sort((x,y)=>y.ph.length-x.ph.length);
+const saveOf=(c,a,b)=>({sum:a.p+b.p,off:Math.round((1-c.price/(a.p+b.p))*100)});
+/* ---------- hero ---------- */
+const heroPick=[["Remeras",()=>DATA.find(d=>/Hawk Tour White/i.test(d.name))],["Bermudas",()=>byId("BER-012")],["Baggys",()=>byId("BAG-002")],["Buzos",()=>byId("BUZ-003")]];
+let hi=0;
+function hero(){
+  $("#htabs").innerHTML=heroPick.map((h,i)=>`<button class="tab" type="button" data-h="${i}" aria-pressed="${i===hi}">${h[0]}</button>`).join("");
+  const d=heroPick[hi][1]()||DATA[0];
+  $("#hph").innerHTML=photo(d);$("#hph").dataset.open=d.id;$("#hcat").textContent=d.cat;$("#hname").textContent=d.name;$("#hprice").textContent=money(d.p);
+}
+function strip(){
+  const R=remeras()[0];
+  $("#cstrip").innerHTML=COMBOS.map((c,i)=>{const A=bermudasOf(c)[0],sv=saveOf(c,A,R);return `<button class="cc" type="button" data-cgo="${i}"><div class="ph">${photo(A)}</div><div><b>${c.n}</b><small>${c.d}</small><div class="p">${money(c.price)}</div><span class="save">Ahorrás hasta ${sv.off}%</span> <span class="go">Armar →</span></div></button>`}).join("");
+}
+/* ---------- productos ---------- */
+let cat="Todo",qs="",sel={},sort="top",fsz="";
+const cats=["Todo",...new Set(DATA.map(d=>d.cat))];
+function chips(){$("#chips").innerHTML=cats.map(c=>`<button class="chip" type="button" data-c="${c}" aria-pressed="${c===cat}">${c}</button>`).join("")}
+const sizesOf=d=>[...new Set(d.v.map(v=>v.t))];
+const topSold=[...DATA].filter(d=>d.sold>=3).sort((a,b)=>b.sold-a.sold).slice(0,6).map(d=>d.id);
+function card(d){
+  const tot=d.v.reduce((a,v)=>a+v.q,0),s=sel[d.id],cm=comboOf(d)||(d.cat==="Remeras"&&d.cmb?COMBOS[0]:null);
+  const sz=sizesOf(d).map(t=>`<button class="sz" type="button" data-t="${t}" aria-pressed="${s===t}">${t}</button>`).join("");
+  return `<article class="card" data-id="${d.id}"><div class="ph link" data-open="${d.id}"><span class="sello">Sello Bona</span>${tot<=1?'<span class="last">Última unidad</span>':tot<=3?`<span class="last">Quedan ${tot}</span>`:""}${topSold.includes(d.id)?'<span class="best">Más pedido</span>':""}${photo(d)}</div>
+  <div class="cb"><h3><a data-open="${d.id}" role="button" tabindex="0">${d.name}</a></h3><div class="pr"><strong>${money(d.p)}</strong><span>transferencia</span></div><div class="tarj">${money(d.c)} con tarjeta</div>
+  <div class="three-u">Llevá 3 y pagás ${money(d.p*.85)} c/u</div>
+  ${cm?`<div class="note">En combo desde ${money(cm.price)}</div>`:""}
+  <div class="sizes" role="group" aria-label="Talle">${sz}</div>
+  <button class="add" type="button" ${s?"":"disabled"}>${s?"Agregar al carrito":"Elegí un talle"}</button></div></article>`;
+}
+const PREVIEW=8;let showAll=false;
+function grid(){
+  const k=qs.trim().toLowerCase();
+  let l=DATA.filter(d=>(cat==="Todo"||d.cat===cat)&&(!k||d.name.toLowerCase().includes(k))&&(!fsz||d.v.some(v=>v.t===fsz)));
+  l=[...l].sort((a,b)=>sort==="asc"?a.p-b.p:sort==="desc"?b.p-a.p:(b.sold-a.sold)||(b.ph.length-a.ph.length));
+  const filtered=cat!=="Todo"||k||fsz||sort!=="top";
+  const shown=(showAll||filtered)?l:l.slice(0,PREVIEW);
+  $("#grid").innerHTML=l.length?shown.map(card).join(""):'<div class="empty">No hay modelos con ese filtro.</div>';
+  $("#more").innerHTML=(!filtered&&l.length>PREVIEW)?(showAll?'<button class="ghost" type="button" data-more="0" style="padding:0 28px">Ver menos</button>':`<button class="btn" type="button" data-more="1">Ver todo el catálogo (${l.length})</button>`):"";
+  $("#resumen").textContent=(shown.length<l.length?`Mostrando ${shown.length} de ${l.length} modelos. `:l.length+" modelos. ")+"Tocá una prenda para ver todas sus fotos.";
+}
+/* ---------- carrito ---------- */
+let cart=[];
+const units=()=>cart.reduce((a,l)=>a+l.n,0);
+const loose=()=>cart.filter(l=>l.fixed==null).reduce((a,l)=>a+l.n,0);
+const unit=l=>l.fixed!=null?l.fixed:l.p*(1-Math.max(l.disc||0,tierPct(loose())));
+const sub=()=>cart.reduce((a,l)=>a+unit(l)*l.n,0);
+function addLine(d,v,extra){
+  extra=extra||{};
+  const f=cart.find(l=>l.sku===v.sku&&l.t===v.t&&(l.tag||"")===(extra.tag||"")&&l.fixed===extra.fixed);
+  if(f){if(f.n<v.q)f.n++}else cart.push(Object.assign({sku:v.sku,id:d.id,name:d.name,c:v.c,t:v.t,p:d.p,n:1,q:v.q},extra));
+}
+function orderText(){
+  if(!cart.length)return"";
+  const pct=tierPct(loose());
+  return "Hola Bona! Quiero hacer este pedido:\n"+cart.map(l=>`• ${l.n} x ${l.name}${l.c?" "+l.c:""} (talle ${l.t}) [${l.sku}]${l.tag?" - "+l.tag:""} - ${money(unit(l)*l.n)}`).join("\n")+(pct?`\nDescuento por cantidad (${loose()} prendas sueltas): ${pct*100}%`:"")+`\nTotal por transferencia: ${money(sub())}\nMi nombre y ciudad:`;
+}
+function progress(){
+  const n=loose();
+  if(!units())return"";
+  const next=n<3?[3,15]:n<10?[10,23]:n<20?[20,32]:null;
+  if(!next)return `<div class="prog"><b>Ya tenés 32% OFF en prendas sueltas</b></div>`;
+  const pc=Math.min(100,Math.round(n/next[0]*100));
+  return `<div class="prog"><b>Sumá ${next[0]-n} ${next[0]-n===1?"prenda suelta":"prendas sueltas"} y llegás a ${next[1]}% OFF</b><div class="bar2"><i style="width:${pc}%"></i></div></div>`;
+}
+const FREE=125000;
+function ship(){
+  if(!units())return"";
+  const s=sub();
+  if(s>=FREE)return `<div class="prog"><b>Tenés envío gratis a todo el país</b></div>`;
+  return `<div class="prog"><b>Te faltan ${money(FREE-s)} para el envío gratis</b><div class="bar2"><i style="width:${Math.round(s/FREE*100)}%"></i></div></div>`;
+}
+function xsell(){
+  const ber=cart.some(l=>byId(l.id)&&byId(l.id).cat==="Bermudas"&&l.fixed==null),rem=cart.some(l=>byId(l.id)&&byId(l.id).cat==="Remeras");
+  if(ber&&!rem)return `<div class="xsell"><b>Sumá una remera y pagás precio de combo</b><button class="ghost" type="button" data-cgo="0">Ver combos desde ${money(33500)}</button></div>`;
+  return"";
+}
+function render(){
+  const u=units();$("#cnt").textContent=u;$("#cnt2").textContent=u;
+  $("#items").innerHTML=cart.length?cart.map((l,i)=>{const d=byId(l.id);return `<div class="it"><div class="ph">${photo(d)}</div><div><b>${l.name}</b>${l.tag?" · "+l.tag:""}<br><span class="note">${l.c?l.c+" · ":""}Talle ${l.t} · ${money(unit(l))}</span></div><div class="qty"><button type="button" data-d="-1" data-i="${i}" aria-label="Menos">−</button>${l.n}<button type="button" data-d="1" data-i="${i}" aria-label="Más">+</button></div></div>`}).join(""):'<p class="note">Todavía no agregaste nada. Los combos arrancan en $33.500.</p>';
+  $("#prog").innerHTML=progress()+ship();$("#watot").textContent=money(sub());crossSell();upsell();
+  const s=sub(),c=r100(s/.88),p=tierPct(loose()),list=cart.reduce((a,l)=>a+l.p*l.n,0);
+  $("#tot").innerHTML=(list-s>1?`<div class="r"><span>Ahorrás vs. precio de lista</span><span>${money(list-s)}</span></div>`:"")+`<div class="r"><span>Con tarjeta</span><span>${money(c)}</span></div><div class="t"><span>Transferencia</span><span>${money(s)}</span></div>`;
+  $("#wa").href=u?`https://wa.me/${WA}?text=${encodeURIComponent(orderText())}`:"#";
+  $("#wa").setAttribute("aria-disabled",u?"false":"true");
+  const open=$("#drawer").classList.contains("open");
+  $("#sticky").hidden=!u||open;
+  $("#stn").textContent=u+(u===1?" prenda":" prendas")+" en tu carrito";$("#stt").textContent=money(s);
+}
+/* ---------- combos UI ---------- */
+let ci=0,cs={a:null,b:null};
+const vopt=d=>d.v.map((v,i)=>`<option value="${i}">${v.c?v.c+" · ":""}Talle ${v.t}</option>`).join("");
+function comboUI(){
+  $("#cpills").innerHTML=COMBOS.map((c,i)=>`<button class="pill" type="button" data-ci="${i}" aria-pressed="${i===ci}">${c.n} · ${money(c.price)}<small>${c.d}</small></button>`).join("");
+  const c=COMBOS[ci],A=bermudasOf(c),B=remeras();
+  if(!cs.a||!A.some(d=>d.id===cs.a))cs.a=A[0].id;
+  if(!cs.b||!B.some(d=>d.id===cs.b))cs.b=B[0].id;
+  $("#fitcard").innerHTML=`<div class="pair"><div><div class="ph" id="ca"></div><select class="sel" id="sa" aria-label="Elegí la bermuda">${A.map(d=>`<option value="${d.id}" ${d.id===cs.a?"selected":""}>${d.name}</option>`).join("")}</select><select class="sel" id="va" aria-label="Talle de la bermuda"></select></div>
+  <div><div class="ph" id="cb"></div><select class="sel" id="sb" aria-label="Elegí la remera">${B.map(d=>`<option value="${d.id}" ${d.id===cs.b?"selected":""}>${d.name}</option>`).join("")}</select><select class="sel" id="vb" aria-label="Talle de la remera"></select></div></div>
+  <div class="cap" style="margin-top:18px;color:var(--green)" id="ctag"></div>
+  <div style="font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:4px">${c.n}</div>
+  <div style="margin-top:10px"><span class="big" id="cprice"></span><span class="old" id="cold"></span> <span class="save" id="csave"></span></div>
+  <div class="tarj" id="ccard"></div>
+  <div class="note" style="margin-top:6px">Precio por transferencia o efectivo. No se suma al descuento por cantidad.</div>
+  <div style="margin-top:16px"><button class="btn" id="cadd" type="button">Sumar combo al carrito</button></div>`;
+  $("#sa").onchange=()=>{cs.a=$("#sa").value;comboShow()};$("#sb").onchange=()=>{cs.b=$("#sb").value;comboShow()};$("#cadd").onclick=addCombo;
+  comboShow();
+}
+function comboShow(){
+  const c=COMBOS[ci],a=byId($("#sa").value),b=byId($("#sb").value);cs.a=a.id;cs.b=b.id;
+  $("#ca").innerHTML=photo(a);$("#cb").innerHTML=photo(b);$("#va").innerHTML=vopt(a);$("#vb").innerHTML=vopt(b);
+  const sv=saveOf(c,a,b);
+  $("#ctag").textContent=`${a.name} + ${b.name}`;
+  $("#cprice").textContent=money(c.price);$("#cold").textContent=money(sv.sum);$("#csave").textContent=`${sv.off}% OFF`;
+  $("#ccard").textContent=money(r100(c.price/.88))+" con tarjeta";
+}
+function addCombo(){
+  const c=COMBOS[ci],a=byId($("#sa").value),b=byId($("#sb").value);
+  const fa=r100(c.price*a.p/(a.p+b.p));
+  addLine(a,a.v[$("#va").value],{tag:c.n,fixed:fa});addLine(b,b.v[$("#vb").value],{tag:c.n,fixed:c.price-fa});
+  render();drawer(true);
+}
+function goCombo(i,aId,bId){
+  ci=i;if(aId)cs.a=aId;if(bId)cs.b=bId;comboUI();closePdp();drawer(false);$("#combos").scrollIntoView({behavior:"smooth"});
+}
+/* ---------- packs a elección ---------- */
+const PACKTYPES=[
+ {n:"2 remeras",f:d=>d.cat==="Remeras"&&!/Morley/i.test(d.name)},
+ {n:"2 bermudas de jean",f:d=>inCombo(d,COMBOS[2])},
+ {n:"2 bermudas jogging",f:d=>inCombo(d,COMBOS[0])},
+ {n:"2 baggys o joggings",f:d=>d.cat==="Baggys y joggings"}
+];
+let pt=0,pc={a:null,b:null};
+const pool=()=>DATA.filter(PACKTYPES[pt].f).sort((x,y)=>y.ph.length-x.ph.length);
+function packUI(){
+  $("#ptabs").innerHTML=PACKTYPES.map((t,i)=>`<button class="chip" type="button" data-pt="${i}" aria-pressed="${i===pt}">${t.n}</button>`).join("");
+  const L=pool();
+  if(!pc.a||!L.some(d=>d.id===pc.a))pc.a=L[0].id;
+  if(!pc.b||!L.some(d=>d.id===pc.b))pc.b=(L[1]||L[0]).id;
+  const col=(k,sel)=>`<div><div class="ph" id="pph${k}"></div><select class="sel" id="ps${k}" aria-label="Modelo ${k}">${L.map(d=>`<option value="${d.id}" ${d.id===sel?"selected":""}>${d.name} · ${money(d.p)}</option>`).join("")}</select><select class="sel" id="pv${k}" aria-label="Talle ${k}"></select></div>`;
+  $("#packcard").innerHTML=`<div class="pair">${col("a",pc.a)}${col("b",pc.b)}</div>
+  <div style="margin-top:16px"><span class="big" id="ppr"></span><span class="old" id="pold"></span> <span class="save">10% OFF</span></div><div class="tarj" id="pcard"></div>
+  <div class="note" style="margin-top:6px">Podés repetir el mismo modelo en otro talle. Precio por transferencia o efectivo.</div>
+  <div style="margin-top:14px"><button class="btn" id="padd2" type="button">Sumar pack al carrito</button></div>`;
+  $("#psa").onchange=()=>{pc.a=$("#psa").value;packShow()};$("#psb").onchange=()=>{pc.b=$("#psb").value;packShow()};$("#padd2").onclick=addPack;
+  packShow();
+}
+function packShow(){
+  const a=byId($("#psa").value),b=byId($("#psb").value);pc.a=a.id;pc.b=b.id;
+  $("#ppha").innerHTML=photo(a);$("#pphb").innerHTML=photo(b);$("#pva").innerHTML=vopt(a);$("#pvb").innerHTML=vopt(b);
+  const sum=a.p+b.p,pr=r100(sum*(1-PACK));
+  $("#ppr").textContent=money(pr);$("#pold").textContent=money(sum);$("#pcard").textContent=money(r100(pr/.88))+" con tarjeta";
+}
+function addPack(){
+  const a=byId($("#psa").value),b=byId($("#psb").value);
+  addLine(a,a.v[$("#pva").value],{disc:PACK,tag:"Pack ×2"});addLine(b,b.v[$("#pvb").value],{disc:PACK,tag:"Pack ×2"});
+  render();drawer(true);
+}
+function goPack(id){
+  const d=byId(id);const i=PACKTYPES.findIndex(t=>t.f(d));if(i>=0){pt=i;pc={a:id,b:null};packUI()}
+  closePdp();$("#packs").scrollIntoView({behavior:"smooth"});
+}
+/* ---------- accesorios (upsell del carrito) ---------- */
+const ACC=.10;
+function upsell(){
+  if(!units()){$("#up").innerHTML="";return}
+  const acc=DATA.filter(d=>d.up);
+  $("#up").innerHTML=acc.length?`<div class="cap" style="margin:4px 0 4px">Sumá un accesorio con ${ACC*100}% OFF</div><div class="upg">${acc.map(d=>`<div class="upi"><div class="ph">${photo(d)}</div><div><b>${d.name}</b><br><select class="sel" style="margin:4px 0 0;min-height:36px" data-upv="${d.id}">${vopt(d)}</select></div><button type="button" data-up="${d.id}"><s style="opacity:.6;font-weight:400">${money(d.p)}</s> ${money(d.p*(1-ACC))}</button></div>`).join("")}</div><div class="note" style="margin-top:6px">Más accesorios en la tienda.</div>`:"";
+}
+/* ---------- venta cruzada: completá el combo ---------- */
+const isBer=d=>d&&d.cat==="Bermudas"&&comboOf(d);
+const isRem=d=>d&&d.cat==="Remeras"&&d.cmb&&!/Morley/i.test(d.name);
+function crossSell(){
+  const el=$("#xs");el.innerHTML="";
+  const ls=cart.filter(l=>l.fixed==null&&!l.tag);
+  const ber=ls.find(l=>isBer(byId(l.id))),rem=ls.find(l=>isRem(byId(l.id)));
+  let html="";
+  if(ber&&!rem){
+    const cm=comboOf(byId(ber.id)),A=byId(ber.id);
+    const list=remeras().slice(0,3);
+    html=`<div class="cap" style="color:var(--green)">Completá tu ${cm.n}: ${money(cm.price)}</div><div class="upg">${list.map(d=>{const sv=saveOf(cm,A,d);return `<div class="upi"><div class="ph">${photo(d)}</div><div><b>${d.name}</b><br><select class="sel" style="margin:4px 0 0;min-height:36px" data-xv="${d.id}">${vopt(d)}</select></div><button type="button" data-xm="${d.id}" data-xl="${cart.indexOf(ber)}">Sumar y pagar ${money(cm.price)}<br><small>ahorrás ${money(sv.sum-cm.price)}</small></button></div>`}).join("")}</div>`;
+  }else if(rem&&!ber){
+    const cm=COMBOS[0],R=byId(rem.id);
+    const list=bermudasOf(cm).filter(d=>d.v.length).slice(0,3);
+    html=`<div class="cap" style="color:var(--green)">Sumale una bermuda y pagás ${cm.n} ${money(cm.price)}</div><div class="upg">${list.map(d=>{const sv=saveOf(cm,d,R);return `<div class="upi"><div class="ph">${photo(d)}</div><div><b>${d.name}</b><br><select class="sel" style="margin:4px 0 0;min-height:36px" data-xv="${d.id}">${vopt(d)}</select></div><button type="button" data-xm="${d.id}" data-xl="${cart.indexOf(rem)}">Sumar y pagar ${money(cm.price)}<br><small>ahorrás ${money(sv.sum-cm.price)}</small></button></div>`}).join("")}</div>`;
+  }
+  el.innerHTML=html;
+}
+function makeCombo(newId,li){
+  const l=cart[li];if(!l)return;
+  const d0=byId(l.id),d1=byId(newId),v1=d1.v[document.querySelector(`[data-xv="${newId}"]`).value];
+  const ber=isBer(d0)?d0:d1,rem=isBer(d0)?d1:d0,vb=ber===d0?{sku:l.sku,c:l.c,t:l.t,q:l.q}:v1,vr=rem===d0?{sku:l.sku,c:l.c,t:l.t,q:l.q}:v1;
+  const cm=comboOf(ber),fa=r100(cm.price*ber.p/(ber.p+rem.p));
+  l.n-=1;if(l.n<=0)cart.splice(li,1);
+  addLine(ber,vb,{tag:cm.n,fixed:fa});addLine(rem,vr,{tag:cm.n,fixed:cm.price-fa});
+  render();
+}
+/* ---------- cuenta regresiva y reseñas ---------- */
+const LAUNCH_END=new Date("2026-11-02T23:59:59-03:00");   /* 8 días desde el 25/10; decisión de Luchi: cada 8 días ella pide renovarla */
+function tick(){
+  const ms=LAUNCH_END-Date.now(),el=$("#cd");
+  if(ms<=0){el.hidden=true;return}
+  const s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),x=s%60,p=n=>String(n).padStart(2,"0");
+  el.hidden=false;el.innerHTML=`Combos de lanzamiento: terminan en <b>${d}d ${p(h)}:${p(m)}:${p(x)}</b>`;
+}
+const MODO_BOCETO=true;   /* en false se ocultan las reseñas de ejemplo */
+const REVIEWS=[
+ {n:"Cliente de Bona · Reloj vintage",s:5,t:"“Nos re gustó… muy copado ❤️”"},
+ {n:"Cliente de Bona · Garage Sale",s:5,t:"“Todavía no puedo creer lo que fue el garage sale de Bona.”"}
+];
+function reviews(){
+  const l=REVIEWS.filter(r=>MODO_BOCETO||!r.ej);
+  $("#resenas").hidden=!l.length;
+  $("#revlist").innerHTML=l.map(r=>`<article>${r.ej?'<span class="ej">EJEMPLO</span>':""}<div class="stars" aria-label="${r.s} de 5">${"★".repeat(r.s)}${"☆".repeat(5-r.s)}</div><div>${r.t}</div><div class="note"><b>${r.n}</b></div></article>`).join("");
+}
+/* ---------- página de producto ---------- */
+let P={id:null,i:0,mode:1,s1:0,s2:0};
+const seen=[];
+function openPdp(id,mode){
+  P={id,i:0,mode:mode||1,s1:0,s2:0};pdp();
+  $("#pdp").hidden=false;$("#pdp").scrollTop=0;document.documentElement.style.overflow="hidden";
+  if(!seen.includes(id))seen.unshift(id);
+  $("#sticky").hidden=true;
+}
+function closePdp(){$("#pdp").hidden=true;document.documentElement.style.overflow="";render()}
+function pdp(){
+  const d=byId(P.id),n=d.ph.length||1;
+  const thumbs=d.ph.length>1?d.ph.map((_,i)=>`<button type="button" data-ti="${i}" aria-pressed="${i===P.i}" aria-label="Foto ${i+1}"><img src="${d.ph[i]}" alt="" onerror="this.remove()"></button>`).join(""):"";
+  const tot=d.v.reduce((a,v)=>a+v.q,0);
+  const vopts=d.v.map((v,i)=>`<option value="${i}">${v.c?v.c+" · ":""}Talle ${v.t} (${v.q} en stock)</option>`).join("");
+  const pk=false;
+  const lad=[[1,0],[3,.15],[10,.23],[20,.32]].map(([q,p])=>`<tr><td>${q===1?"1 unidad":q+" o más"}</td><td>${p?p*100+"% OFF":"Precio lista"}</td><td>${money(d.p*(1-p))} c/u</td></tr>`).join("");
+  const cm=comboOf(d);let cross="";
+  if(cm){const R=remeras()[0],sv=saveOf(cm,d,R);cross=`<div class="xsell" style="margin-top:14px"><b>Completá tu fit: ${cm.n} ${money(cm.price)}</b><span class="note">Esta bermuda + una remera. Ahorrás ${money(sv.sum-cm.price)} (${sv.off}% OFF) frente a comprarlas sueltas.</span><button class="btn" type="button" data-cgo="${COMBOS.indexOf(cm)}" data-ca="${d.id}">Armar combo con esta bermuda</button></div>`}
+  else if(d.cat==="Remeras"&&d.cmb){cross=`<div class="xsell" style="margin-top:14px"><b>Sumale una bermuda y pagás precio de combo</b><span class="note">Combos desde ${money(33500)} por transferencia.</span><button class="btn" type="button" data-cgo="0" data-cb="${d.id}">Armar combo con esta remera</button></div>`}
+  $("#pbody").innerHTML=`<div class="gal"><div class="main ph">${photo(d,P.i)}${n>1?'<button class="nav" style="left:10px" data-nav="-1" type="button" aria-label="Anterior">‹</button><button class="nav" style="right:10px" data-nav="1" type="button" aria-label="Siguiente">›</button>':""}</div><div class="thumbs">${thumbs}</div></div>
+  <div class="pinfo"><div class="cap" style="color:var(--green)">${d.cat}</div><h1>${d.name}</h1>
+  <div style="margin-top:14px"><span class="big">${money(pk?r100(d.p*2*(1-PACK)):d.p)}</span> <span style="color:var(--green);font-weight:700;font-size:14px">por transferencia${pk?" · pack ×2":""}</span>${pk?`<span class="old">${money(d.p*2)}</span>`:""}</div>
+  <div class="tarj">${money(r100((pk?d.p*2*(1-PACK):d.p)/.88))} con tarjeta</div>
+  <div class="three-u" style="margin-top:6px;font-size:14px">Llevá 3 y pagás ${money(d.p*.85)} c/u · 10 o más: ${money(d.p*.77)} c/u</div>
+  <label class="cap" style="display:block;margin-top:6px">Talle${pk?" · prenda 1":""}</label><select class="sel" id="p1">${vopts}</select>
+  ${pk?`<label class="cap" style="display:block;margin-top:10px">Talle · prenda 2</label><select class="sel" id="p2">${vopts}</select>`:""}
+  <div class="note" style="margin-top:6px">${tot<=1?"Última unidad.":tot<=3?`Quedan ${tot} unidades entre todos los talles.`:tot+" unidades en stock entre todos los talles."}</div>
+  <div style="display:grid;gap:10px;margin-top:16px"><button class="btn" id="padd" type="button">Agregar al carrito</button><button class="ghost" type="button" data-pk="${d.id}">Armar un pack ×2 con esta prenda (10% OFF)</button></div>${cross}
+  <div class="cap" style="margin-top:28px">Cuanto más llevás, menos pagás</div>
+  <table class="ladder"><thead><tr><th>Cantidad</th><th>Descuento</th><th>Transferencia</th></tr></thead><tbody>${lad}</tbody></table>
+  <ul class="facts"><li>Envío gratis desde $125.000 a todo el país. En San Juan, envíos en el día por moto mensajería.</li><li>Retiro en San Juan (Rivadavia, Suipacha 4027, lunes a viernes de 9 a 18) o en CABA (Caballito).</li><li>Pagás por transferencia con 12% OFF o con tarjeta, y cerramos todo por WhatsApp.</li></ul></div>`;
+  if($("#p1"))$("#p1").value=P.s1;if($("#p2"))$("#p2").value=P.s2;
+  const rel=DATA.filter(x=>x.cat===d.cat&&x.id!==d.id).slice(0,4);
+  const vis=seen.filter(x=>x!==d.id).slice(0,4).map(byId);
+  $("#prel").innerHTML=(rel.length?`<div class="cap" style="color:var(--green);margin-bottom:12px">También en ${d.cat}</div><div class="grid">${rel.map(card).join("")}</div>`:"")+(vis.length?`<div class="cap" style="color:var(--green);margin:28px 0 12px">Viste hace un rato</div><div class="grid">${vis.map(card).join("")}</div>`:"");
+}
+function pdpAdd(){
+  const d=byId(P.id),pk=P.mode===2,v1=d.v[$("#p1").value];
+  addLine(d,v1);
+  render();drawer(true);
+}
+/* ---------- mayorista ---------- */
+let qn=3;
+const EX=DATA.find(d=>/Hawk Tour White/i.test(d.name))||DATA.find(d=>d.cat==="Remeras");
+function calc(){
+  $("#cex").textContent=`Ejemplo con ${EX.name} (precio con tarjeta ${money(EX.c)}).`;
+  $("#qchips").innerHTML=[1,3,5,10,20].map(q=>`<button class="qchip" type="button" data-q="${q}" aria-pressed="${q===qn}">${q}</button>`).join("");
+  const p=tierPct(qn);
+  $("#tiers").innerHTML=[["1 a 2",0,qn<3],["3 a 9",15,qn>=3&&qn<10],["10 a 19",23,qn>=10&&qn<20],["20 o más",32,qn>=20]].map(t=>`<div class="tier ${t[2]?"on":""}"><div class="cap" style="font-size:10px">${t[0]}</div><div style="font-weight:800;margin-top:4px">${t[1]?t[1]+"% OFF":"Sin desc."}</div></div>`).join("");
+  const t=EX.p*qn*(1-p),card=EX.c*qn;
+  $("#ctrans").textContent=money(t);
+  $("#ccardp").textContent=`Con tarjeta: ${money(EX.c*qn*(1-p))} · Ahorrás ${money(card-t)}`;
+}
+/* ---------- eventos ---------- */
+document.addEventListener("click",e=>{
+  const o=e.target.closest("[data-open]");
+  if(o&&!e.target.closest(".sz,.add")){openPdp(o.dataset.open);return}
+  const t=e.target.closest("button");if(!t)return;
+  if(t.dataset.cgo!==undefined){goCombo(+t.dataset.cgo,t.dataset.ca,t.dataset.cb);return}
+  if(t.dataset.h!==undefined){hi=+t.dataset.h;hero()}
+  else if(t.dataset.c){cat=t.dataset.c;chips();grid()}
+  else if(t.classList.contains("sz")){const id=t.closest(".card").dataset.id;sel[id]=t.dataset.t;const y=scrollY,pt=$("#pdp").scrollTop;grid();scrollTo(0,y);if(!$("#pdp").hidden){pdp();$("#pdp").scrollTop=pt}}
+  else if(t.classList.contains("add")){
+    const id=t.closest(".card").dataset.id,d=byId(id),v=d.v.find(x=>x.t===sel[id]);
+    if(v){addLine(d,v);render();t.textContent="Agregado ✓";setTimeout(()=>{delete sel[id];grid();if(!$("#pdp").hidden)pdp()},700)}
+  }
+  else if(t.dataset.d){const l=cart[+t.dataset.i];l.n=Math.min(l.q,l.n+ +t.dataset.d);if(l.n<=0)cart.splice(+t.dataset.i,1);render()}
+  else if(t.dataset.ci!==undefined){ci=+t.dataset.ci;comboUI()}
+  else if(t.dataset.q){qn=+t.dataset.q;calc()}
+  else if(t.dataset.more!==undefined){showAll=t.dataset.more==="1";grid()}
+  else if(t.dataset.pt!==undefined){pt=+t.dataset.pt;pc={a:null,b:null};packUI()}
+  else if(t.dataset.pk){goPack(t.dataset.pk)}
+  else if(t.dataset.up){const d=byId(t.dataset.up),v=d.v[document.querySelector(`[data-upv="${d.id}"]`).value];addLine(d,v,{disc:ACC,tag:"Accesorio -10%"});render()}
+  else if(t.dataset.xm){makeCombo(t.dataset.xm,+t.dataset.xl)}
+  else if(t.dataset.ti!==undefined){P.i=+t.dataset.ti;pdp()}
+  else if(t.dataset.nav){const n=byId(P.id).ph.length;P.i=(P.i+ +t.dataset.nav+n)%n;pdp()}
+  else if(t.id==="padd")pdpAdd();
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if($("#drawer").classList.contains("open"))drawer(false);else if(!$("#pdp").hidden)closePdp()}});
+function drawer(o){$("#drawer").classList.toggle("open",o);$("#drawer").setAttribute("aria-hidden",!o);render()}
+$("#open").onclick=()=>drawer(true);$("#open2").onclick=()=>drawer(true);$("#close").onclick=$("#scrim").onclick=()=>drawer(false);$("#pback").onclick=closePdp;$("#stgo").onclick=()=>drawer(true);
+$("#q").oninput=e=>{qs=e.target.value;grid()};$("#sort").onchange=e=>{sort=e.target.value;grid()};$("#fsz").onchange=e=>{fsz=e.target.value;grid()};
+$("#fsz").innerHTML='<option value="">Todos los talles</option>'+[...new Set(DATA.flatMap(sizesOf))].sort().map(t=>`<option>${t}</option>`).join("");
+$("#copy").onclick=async()=>{const t=orderText();if(!t)return;try{await navigator.clipboard.writeText(t);$("#msg").textContent="Pedido copiado. Pegalo en el chat de WhatsApp."}catch(e){$("#msg").textContent="No se pudo copiar. Usá el botón de enviar."}};
+$("#wa2").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Quiero consultar por el showroom.")}`;
+$("#boxwa").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Avisenme cuando salga la Bonabox.")}`;
+$("#commwa").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Quiero sumarme a la comunidad.")}`;
+hero();strip();chips();grid();comboUI();packUI();calc();reviews();tick();setInterval(tick,1000);$('#revwa').href=`https://wa.me/${WA}?text=${encodeURIComponent('Hola Bona! Quiero dejar mi reseña de mi compra.')}`;render();
+</script>
