@@ -297,7 +297,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
   <p style="font-size:18px;max-width:32em;margin:16px 0 0">Dos prendas de la misma categoría, con cualquier modelo disponible, y 10% OFF sobre el total. Pagás por transferencia o efectivo. El pack no se suma al descuento por cantidad.</p>
   <div class="tools" id="ptabs" role="group" aria-label="Tipo de pack"></div>
   <div class="fitcard" id="packcard" style="max-width:760px"></div>
-  <p class="note" style="margin-top:12px">Packs en borrador: porcentaje a confirmar.</p>
+  <p class="note" style="margin-top:12px">Los packs y combos ya incluyen su descuento y no se suman a otras promos.</p>
 </div></section>
 <section class="sec" style="padding-top:0"><div class="wrap">
   <div class="box"><div class="pat"></div><div style="max-width:560px;display:grid;gap:12px">
@@ -368,7 +368,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
     <div><div class="cap" style="color:var(--green)">Showroom</div><h2 style="font-size:clamp(30px,4vw,48px)">Retirá en <span class="sc">San Juan.</span></h2></div>
     <div style="display:grid;gap:8px"><div>Suipacha 4027 (oeste), Los Mirasoles, Rivadavia, San Juan.</div><div>Retiros de lunes a viernes de 9 a 18. Visitas a coordinar por WhatsApp. También retiro en CABA (Caballito).</div><div><a class="btn" id="wa2" href="#" target="_blank" rel="noopener">Escribinos por WhatsApp</a></div></div>
   </div>
-  <footer><span class="logo" role="img" aria-label="Bona Street"></span><span>Streetwear para todos los días. Vestite bien. Pagá lo justo.</span></footer>
+  <footer><span class="logo" role="img" aria-label="Bona Street"></span><span>Streetwear para todos los días. Vestite bien. Pagá lo justo. · Versión 26/10/2026</span></footer>
 </div></section>
 
 
@@ -390,6 +390,11 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
     <div id="prog" style="display:grid;gap:10px"></div>
     <div id="up"></div>
     <div class="tot" id="tot"></div>
+    <div class="cup" style="display:grid;gap:8px;margin-top:14px">
+      <b>¿Tenés un cupón?</b>
+      <div style="display:flex;gap:8px"><input class="sel" id="fcup" type="text" placeholder="Código de descuento" autocapitalize="characters" autocomplete="off" style="margin:0;flex:1;min-width:0"><button class="ghost" id="bcup" type="button">Aplicar</button></div>
+      <div class="note" id="mcup" role="status"></div>
+    </div>
     <div class="buy" style="display:grid;gap:8px;margin-top:14px">
       <b>Tus datos para el pedido</b>
       <input class="sel" id="fnom" type="text" placeholder="Tu nombre" autocomplete="name" style="margin:0">
@@ -478,8 +483,16 @@ let cart=[];
 const units=()=>cart.reduce((a,l)=>a+l.n,0);
 const isLoose=l=>l.fixed==null&&!l.disc;   /* combos (precio fijo), packs y accesorios con descuento propio NO cuentan para la escala 3/10/20 ni se acumulan con ella */
 const loose=()=>cart.filter(isLoose).reduce((a,l)=>a+l.n,0);
-const unit=l=>l.fixed!=null?l.fixed:l.disc?l.p*(1-l.disc):l.p*(1-tierPct(loose()));
-const sub=()=>cart.reduce((a,l)=>a+unit(l)*l.n,0);
+let CUP=null;   /* cupón activo: {code,t:"pct"|"monto",v,min,acum} · se valida contra cupones.json (códigos guardados como hash) */
+const listTotal=()=>cart.reduce((a,l)=>a+l.p*l.n,0);
+const cupOn=()=>CUP&&listTotal()>=(CUP.min||0);
+/* % de cupón: aplica solo a prendas sueltas; por defecto no se suma a la escala 3/10/20 (rige el mayor); con acum:true se multiplican */
+const tierEff=()=>{const tp=tierPct(loose());if(cupOn()&&CUP.t==="pct"){const c=CUP.v/100;return CUP.acum?1-(1-tp)*(1-c):Math.max(tp,c)}return tp};
+const unit=l=>l.fixed!=null?l.fixed:l.disc?l.p*(1-l.disc):l.p*(1-tierEff());
+const subRaw=()=>cart.reduce((a,l)=>a+unit(l)*l.n,0);
+const cupMonto=()=>cupOn()&&CUP.t==="monto"?Math.min(CUP.v,subRaw()):0;
+const sub=()=>subRaw()-cupMonto();
+const cupAhorro=()=>{if(!cupOn())return 0;const k=CUP;CUP=null;const s0=sub();CUP=k;return Math.max(0,s0-sub())};
 function addLine(d,v,extra){
   extra=extra||{};
   const f=cart.find(l=>l.sku===v.sku&&l.t===v.t&&(l.tag||"")===(extra.tag||"")&&l.fixed===extra.fixed);
@@ -494,7 +507,7 @@ function orderText(){
   return "Hola Bona! Quiero hacer este pedido:\n"+cart.map(l=>`• ${l.n} x ${l.name}${l.c?" "+l.c:""} (talle ${l.t}) [${l.sku}]${l.tag?" - "+l.tag:""} - ${money(unit(l)*l.n)}`).join("\n")
    +(pct&&loose()>=3?`\nDescuento por cantidad (${loose()} prendas sueltas): ${pct*100}%`:"")
    +`\nTotal por transferencia: ${money(sub())}\nCon tarjeta: ${money(r100(sub()/.88))}`
-   +(SRC?`\nOrigen: ${SRC}`:"")+`\n\nMi nombre: ${nom}\nMi ciudad: ${ciu}\nEntrega: ${ent}`
+   +(cupOn()?`\nCupón: ${CUP.code} (-${money(cupAhorro())})`:"")+(SRC?`\nOrigen: ${SRC}`:"")+`\n\nMi nombre: ${nom}\nMi ciudad: ${ciu}\nEntrega: ${ent}`
    +`\n\nDatos para transferir:\nAlias: ${BANK.alias}\nBanco: ${BANK.banco}\nTitular: ${BANK.titular}\nCUIT: ${BANK.cuit}`;
 }
 function progress(){
@@ -522,7 +535,7 @@ function render(){
   $("#items").innerHTML=cart.length?cart.map((l,i)=>{const d=byId(l.id);return `<div class="it"><div class="ph">${photo(d)}</div><div><b>${l.name}</b>${l.tag?" · "+l.tag:""}<br><span class="note">${l.c?l.c+" · ":""}Talle ${l.t} · ${money(unit(l))}</span></div><div class="qty"><button type="button" data-d="-1" data-i="${i}" aria-label="Menos">−</button>${l.n}<button type="button" data-d="1" data-i="${i}" aria-label="Más">+</button></div></div>`}).join(""):'<p class="note">Todavía no agregaste nada. Los combos arrancan en $33.500.</p>';
   $("#prog").innerHTML=progress()+ship();$("#watot").textContent=money(sub());crossSell();upsell();
   const s=sub(),c=r100(s/.88),p=tierPct(loose()),list=cart.reduce((a,l)=>a+l.p*l.n,0);
-  $("#tot").innerHTML=(list-s>1?`<div class="r"><span>Ahorrás vs. precio de lista</span><span>${money(list-s)}</span></div>`:"")+`<div class="r"><span>Con tarjeta</span><span>${money(c)}</span></div><div class="t"><span>Transferencia</span><span>${money(s)}</span></div>`;
+  $("#tot").innerHTML=(cupOn()?`<div class="r"><span>Cupón ${CUP.code}</span><span>-${money(cupAhorro())}</span></div>`:"")+(list-s>1?`<div class="r"><span>Ahorrás vs. precio de lista</span><span>${money(list-s)}</span></div>`:"")+`<div class="r"><span>Con tarjeta</span><span>${money(c)}</span></div><div class="t"><span>Transferencia</span><span>${money(s)}</span></div>`;
   $("#wa").href=u?`https://wa.me/${WA}?text=${encodeURIComponent(orderText())}`:"#";
   $("#wa").setAttribute("aria-disabled",u?"false":"true");
   const open=$("#drawer").classList.contains("open");
@@ -570,7 +583,8 @@ const PACKTYPES=[
  {n:"2 remeras",f:d=>d.cat==="Remeras"&&!/Morley/i.test(d.name)},
  {n:"2 bermudas de jean",f:d=>inCombo(d,COMBOS[2])},
  {n:"2 bermudas jogging",f:d=>inCombo(d,COMBOS[0])},
- {n:"2 baggys o joggings",f:d=>d.cat==="Baggys y joggings"}
+ {n:"2 baggys o joggings",f:d=>d.cat==="Baggys y joggings"},
+ {n:"2 shorts importados · $55.000",f:d=>/^Short importado/.test(d.name),fixed:55000}
 ];
 let pt=0,pc={a:null,b:null};
 const pool=()=>DATA.filter(PACKTYPES[pt].f).sort((x,y)=>y.ph.length-x.ph.length);
@@ -581,7 +595,7 @@ function packUI(){
   if(!pc.b||!L.some(d=>d.id===pc.b))pc.b=(L[1]||L[0]).id;
   const col=(k,sel)=>`<div><div class="ph" id="pph${k}"></div><select class="sel" id="ps${k}" aria-label="Modelo ${k}">${L.map(d=>`<option value="${d.id}" ${d.id===sel?"selected":""}>${d.name} · ${money(d.p)}</option>`).join("")}</select><select class="sel" id="pv${k}" aria-label="Talle ${k}"></select></div>`;
   $("#packcard").innerHTML=`<div class="pair">${col("a",pc.a)}${col("b",pc.b)}</div>
-  <div style="margin-top:16px"><span class="big" id="ppr"></span><span class="old" id="pold"></span> <span class="save">10% OFF</span></div><div class="tarj" id="pcard"></div>
+  <div style="margin-top:16px"><span class="big" id="ppr"></span><span class="old" id="pold"></span> <span class="save">${PACKTYPES[pt].fixed?"Combo ×2":"10% OFF"}</span></div><div class="tarj" id="pcard"></div>
   <div class="note" style="margin-top:6px">Podés repetir el mismo modelo en otro talle. Precio por transferencia o efectivo.</div>
   <div style="margin-top:14px"><button class="btn" id="padd2" type="button">Sumar pack al carrito</button></div>`;
   $("#psa").onchange=()=>{pc.a=$("#psa").value;packShow()};$("#psb").onchange=()=>{pc.b=$("#psb").value;packShow()};$("#padd2").onclick=addPack;
@@ -590,12 +604,14 @@ function packUI(){
 function packShow(){
   const a=byId($("#psa").value),b=byId($("#psb").value);pc.a=a.id;pc.b=b.id;
   $("#ppha").innerHTML=photo(a);$("#pphb").innerHTML=photo(b);$("#pva").innerHTML=vopt(a);$("#pvb").innerHTML=vopt(b);
-  const sum=a.p+b.p,pr=r100(sum*(1-PACK));
+  const sum=a.p+b.p,fx=PACKTYPES[pt].fixed,pr=fx||r100(sum*(1-PACK));
   $("#ppr").textContent=money(pr);$("#pold").textContent=money(sum);$("#pcard").textContent=money(r100(pr/.88))+" con tarjeta";
 }
 function addPack(){
   const a=byId($("#psa").value),b=byId($("#psb").value);
-  addLine(a,a.v[$("#pva").value],{disc:PACK,tag:"Pack ×2"});addLine(b,b.v[$("#pvb").value],{disc:PACK,tag:"Pack ×2"});
+  const fx=PACKTYPES[pt].fixed;
+  if(fx){const fa=r100(fx*a.p/(a.p+b.p));addLine(a,a.v[$("#pva").value],{fixed:fa,tag:"Combo ×2 shorts"});addLine(b,b.v[$("#pvb").value],{fixed:fx-fa,tag:"Combo ×2 shorts"})}
+  else{addLine(a,a.v[$("#pva").value],{disc:PACK,tag:"Pack ×2"});addLine(b,b.v[$("#pvb").value],{disc:PACK,tag:"Pack ×2"})}
   render();drawer(true);
 }
 function goPack(id){
@@ -739,6 +755,22 @@ function drawer(o){$("#drawer").classList.toggle("open",o);$("#drawer").setAttri
 $("#open").onclick=()=>drawer(true);$("#open2").onclick=()=>drawer(true);$("#close").onclick=$("#scrim").onclick=()=>drawer(false);$("#pback").onclick=closePdp;$("#stgo").onclick=()=>drawer(true);
 $("#q").oninput=e=>{qs=e.target.value;grid()};$("#sort").onchange=e=>{sort=e.target.value;grid()};$("#fsz").onchange=e=>{fsz=e.target.value;grid()};
 $("#fsz").innerHTML='<option value="">Todos los talles</option>'+[...new Set(DATA.flatMap(sizesOf))].sort().map(t=>`<option>${t}</option>`).join("");
+const sha=async s=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,"0")).join("");
+async function aplicarCupon(){
+  const code=$("#fcup").value.trim().toUpperCase(),m=$("#mcup");
+  if(!code){CUP=null;m.textContent="";render();return}
+  try{
+    const r=await fetch("cupones.json?t="+Date.now(),{cache:"no-store"}),j=await r.json(),h=await sha(code);
+    const c=j.c.find(x=>x.h===h&&x.activo!==false);
+    const hoy=new Date().toISOString().slice(0,10);
+    if(!c||(c.vence&&hoy>c.vence)){CUP=null;m.textContent="Ese cupón no existe o ya venció.";render();return}
+    if(listTotal()<(c.min||0)){CUP=Object.assign({code},c);m.textContent=`Cupón válido desde ${money(c.min)} de compra. Sumá productos para activarlo.`;render();return}
+    CUP=Object.assign({code},c);
+    m.textContent=c.t==="pct"?`Cupón ${code}: ${c.v}% OFF en prendas sueltas${c.acum?" (se suma a la escala)":" (rige el mayor entre el cupón y la escala)"}.`:`Cupón ${code}: ${money(c.v)} de descuento.`;
+    render();
+  }catch(e){CUP=null;m.textContent="No pudimos validar el cupón ahora. Probá de nuevo en un rato."}
+}
+$("#bcup").onclick=aplicarCupon;$("#fcup").addEventListener("keydown",e=>{if(e.key==="Enter")aplicarCupon()});
 ["fnom","fciu","fent"].forEach(id=>{$("#"+id).addEventListener("input",render);$("#"+id).addEventListener("change",render)});
 $("#cpalias").onclick=async()=>{try{await navigator.clipboard.writeText(BANK.alias);$("#cpalias").textContent="Alias copiado"}catch(e){$("#cpalias").textContent="Alias: Bona Street"}};
 $("#copy").onclick=async()=>{const t=orderText();if(!t)return;try{await navigator.clipboard.writeText(t);$("#msg").textContent="Pedido copiado. Pegalo en el chat de WhatsApp."}catch(e){$("#msg").textContent="No se pudo copiar. Usá el botón de enviar."}};
