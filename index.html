@@ -224,6 +224,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
 .ret .pt b{font-size:18px;display:block}
 .free{font-size:clamp(30px,5vw,52px);font-weight:800;letter-spacing:-.035em;line-height:1}
 .upg{display:grid;gap:8px}
+#up .upg{display:flex;overflow-x:auto;gap:10px;padding-bottom:8px;scroll-snap-type:x proximity}#up .upi{flex:0 0 190px;grid-template-columns:1fr;scroll-snap-align:start}#up .upi .ph{width:100%;height:120px}
 .upi{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px;font-size:14px}
 .upi .ph{width:48px;height:60px;border-radius:8px}.upi .ph .fb{font-size:7px;padding:2px}
 .upi button{min-height:40px;border-radius:10px;border:0;background:var(--ink);color:var(--base);font-weight:700;padding:0 12px}
@@ -388,8 +389,8 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
     <div class="items" id="items"></div>
     <div id="xs" style="display:grid;gap:10px"></div>
     <div id="prog" style="display:grid;gap:10px"></div>
-    <div id="up"></div>
     <div class="tot" id="tot"></div>
+    <div id="up"></div>
     <div class="cup" style="display:grid;gap:8px;margin-top:14px">
       <b>¿Tenés un cupón?</b>
       <div style="display:flex;gap:8px"><input class="sel" id="fcup" type="text" placeholder="Código de descuento" autocapitalize="characters" autocomplete="off" style="margin:0;flex:1;min-width:0"><button class="ghost" id="bcup" type="button">Aplicar</button></div>
@@ -490,7 +491,7 @@ const cupOn=()=>CUP&&listTotal()>=(CUP.min||0);
 const tierEff=()=>{const tp=tierPct(loose());if(cupOn()&&CUP.t==="pct"){const c=CUP.v/100;return CUP.acum?1-(1-tp)*(1-c):Math.max(tp,c)}return tp};
 const unit=l=>l.fixed!=null?l.fixed:l.disc?l.p*(1-l.disc):l.p*(1-tierEff());
 const subRaw=()=>cart.reduce((a,l)=>a+unit(l)*l.n,0);
-const cupMonto=()=>cupOn()&&CUP.t==="monto"?Math.min(CUP.v,subRaw()):0;
+const cupMonto=()=>!cupOn()?0:CUP.t==="monto"?Math.min(CUP.v,subRaw()):CUP.t==="total"?Math.round(subRaw()*CUP.v/100):0;   /* "total": % sobre todo el pedido, después de combos, packs y escala */
 const sub=()=>subRaw()-cupMonto();
 const cupAhorro=()=>{if(!cupOn())return 0;const k=CUP;CUP=null;const s0=sub();CUP=k;return Math.max(0,s0-sub())};
 function addLine(d,v,extra){
@@ -766,7 +767,7 @@ async function aplicarCupon(){
     if(!c||(c.vence&&hoy>c.vence)){CUP=null;m.textContent="Ese cupón no existe o ya venció.";render();return}
     if(listTotal()<(c.min||0)){CUP=Object.assign({code},c);m.textContent=`Cupón válido desde ${money(c.min)} de compra. Sumá productos para activarlo.`;render();return}
     CUP=Object.assign({code},c);
-    m.textContent=c.t==="pct"?`Cupón ${code}: ${c.v}% OFF en prendas sueltas${c.acum?" (se suma a la escala)":" (rige el mayor entre el cupón y la escala)"}.`:`Cupón ${code}: ${money(c.v)} de descuento.`;
+    m.textContent=c.t==="total"?`Cupón ${code}: ${c.v}% OFF en toda tu compra.`:c.t==="pct"?`Cupón ${code}: ${c.v}% OFF en prendas sueltas${c.acum?" (se suma a la escala)":" (rige el mayor entre el cupón y la escala)"}.`:`Cupón ${code}: ${money(c.v)} de descuento.`;
     render();
   }catch(e){CUP=null;m.textContent="No pudimos validar el cupón ahora. Probá de nuevo en un rato."}
 }
