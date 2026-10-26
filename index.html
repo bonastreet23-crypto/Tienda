@@ -294,7 +294,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
 <section class="sec" id="packs"><div class="wrap">
   <div class="cap" style="color:var(--green)">Packs</div>
   <h2>Elegí dos <span class="sc">y ahorrá.</span></h2>
-  <p style="font-size:18px;max-width:32em;margin:16px 0 0">Dos prendas de la misma categoría, con cualquier modelo disponible, y 10% OFF sobre el total. Pagás por transferencia o efectivo.</p>
+  <p style="font-size:18px;max-width:32em;margin:16px 0 0">Dos prendas de la misma categoría, con cualquier modelo disponible, y 10% OFF sobre el total. Pagás por transferencia o efectivo. El pack no se suma al descuento por cantidad.</p>
   <div class="tools" id="ptabs" role="group" aria-label="Tipo de pack"></div>
   <div class="fitcard" id="packcard" style="max-width:760px"></div>
   <p class="note" style="margin-top:12px">Packs en borrador: porcentaje a confirmar.</p>
@@ -358,7 +358,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
   <div class="faq" style="margin-top:28px;max-width:760px">
     <div class="cap" style="color:var(--green);margin-bottom:6px">Preguntas frecuentes</div>
     <details><summary>¿Cómo compro?</summary><p>Armás el carrito, tocás "Enviar pedido por WhatsApp" y se abre el chat con tu pedido listo. Te pasamos los datos de pago y coordinamos el envío.</p></details>
-    <details><summary>¿Los combos se suman al descuento por cantidad?</summary><p>No. El precio del combo es final, siempre por transferencia o efectivo. El descuento de 3, 10 y 20 unidades aplica a las prendas sueltas.</p></details>
+    <details><summary>¿Los combos y los packs se suman al descuento por cantidad?</summary><p>No. El precio del combo es final, siempre por transferencia o efectivo. El descuento de 3, 10 y 20 unidades aplica solo a las prendas sueltas: los combos y los packs tienen su propio precio y no se suman a ese descuento (ni cuentan como unidades para llegar a 3, 10 o 20).</p></details>
     <details><summary>¿Puedo retirar en San Juan?</summary><p>Sí. En San Juan: Suipacha 4027 (oeste), Rivadavia, de lunes a viernes de 9 a 18. En CABA: punto de retiro en Caballito.</p></details>
     <details><summary>¿Qué es mayorista?</summary><p>Comprás desde 3 unidades con descuento por cantidad. Para listas completas, mirá la web mayorista.</p></details>
   </div>
@@ -390,6 +390,16 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
     <div id="prog" style="display:grid;gap:10px"></div>
     <div id="up"></div>
     <div class="tot" id="tot"></div>
+    <div class="buy" style="display:grid;gap:8px;margin-top:14px">
+      <b>Tus datos para el pedido</b>
+      <input class="sel" id="fnom" type="text" placeholder="Tu nombre" autocomplete="name" style="margin:0">
+      <input class="sel" id="fciu" type="text" placeholder="Tu ciudad" autocomplete="address-level2" style="margin:0">
+      <select class="sel" id="fent" aria-label="Cómo querés recibirlo" style="margin:0"><option>Envío a domicilio</option><option>Retiro en San Juan (Rivadavia)</option><option>Retiro en CABA (Caballito)</option><option>Moto en el día (San Juan)</option><option>Todavía no sé, lo coordinamos</option></select>
+      <details class="bank" style="border:1px solid var(--line);border-radius:12px;padding:10px 12px"><summary style="font-weight:700;cursor:pointer">Datos para transferir</summary>
+        <div class="note" style="margin-top:8px;line-height:1.7">Alias: <b>Bona Street</b><br>Banco: <b>Mercado Pago</b><br>Titular: <b>Alba Lucía Segovia Noguera</b><br>CUIT: <b>27-50015658-4</b></div>
+        <button class="ghost" id="cpalias" type="button" style="margin-top:8px">Copiar alias</button>
+      </details>
+    </div>
     <button class="ghost" id="copy" type="button">Copiar pedido</button>
     <div class="note" id="msg">Se abre WhatsApp con el pedido armado. Si no abre, copiá el pedido y pegalo en el chat.</div>
   </aside>
@@ -466,18 +476,25 @@ function grid(){
 /* ---------- carrito ---------- */
 let cart=[];
 const units=()=>cart.reduce((a,l)=>a+l.n,0);
-const loose=()=>cart.filter(l=>l.fixed==null).reduce((a,l)=>a+l.n,0);
-const unit=l=>l.fixed!=null?l.fixed:l.p*(1-Math.max(l.disc||0,tierPct(loose())));
+const isLoose=l=>l.fixed==null&&!l.disc;   /* combos (precio fijo), packs y accesorios con descuento propio NO cuentan para la escala 3/10/20 ni se acumulan con ella */
+const loose=()=>cart.filter(isLoose).reduce((a,l)=>a+l.n,0);
+const unit=l=>l.fixed!=null?l.fixed:l.disc?l.p*(1-l.disc):l.p*(1-tierPct(loose()));
 const sub=()=>cart.reduce((a,l)=>a+unit(l)*l.n,0);
 function addLine(d,v,extra){
   extra=extra||{};
   const f=cart.find(l=>l.sku===v.sku&&l.t===v.t&&(l.tag||"")===(extra.tag||"")&&l.fixed===extra.fixed);
   if(f){if(f.n<v.q)f.n++}else cart.push(Object.assign({sku:v.sku,id:d.id,name:d.name,c:v.c,t:v.t,p:d.p,n:1,q:v.q},extra));
 }
+const BANK={alias:"Bona Street",banco:"Mercado Pago",titular:"Alba Lucía Segovia Noguera",cuit:"27-50015658-4"};
 function orderText(){
   if(!cart.length)return"";
-  const pct=tierPct(loose());
-  return "Hola Bona! Quiero hacer este pedido:\n"+cart.map(l=>`• ${l.n} x ${l.name}${l.c?" "+l.c:""} (talle ${l.t}) [${l.sku}]${l.tag?" - "+l.tag:""} - ${money(unit(l)*l.n)}`).join("\n")+(pct?`\nDescuento por cantidad (${loose()} prendas sueltas): ${pct*100}%`:"")+`\nTotal por transferencia: ${money(sub())}\nMi nombre y ciudad:`;
+  const pct=tierPct(loose()),g=id=>(document.getElementById(id)||{}).value||"";
+  const nom=g("fnom").trim(),ciu=g("fciu").trim(),ent=g("fent");
+  return "Hola Bona! Quiero hacer este pedido:\n"+cart.map(l=>`• ${l.n} x ${l.name}${l.c?" "+l.c:""} (talle ${l.t}) [${l.sku}]${l.tag?" - "+l.tag:""} - ${money(unit(l)*l.n)}`).join("\n")
+   +(pct&&loose()>=3?`\nDescuento por cantidad (${loose()} prendas sueltas): ${pct*100}%`:"")
+   +`\nTotal por transferencia: ${money(sub())}\nCon tarjeta: ${money(r100(sub()/.88))}`
+   +`\n\nMi nombre: ${nom}\nMi ciudad: ${ciu}\nEntrega: ${ent}`
+   +`\n\nDatos para transferir:\nAlias: ${BANK.alias}\nBanco: ${BANK.banco}\nTitular: ${BANK.titular}\nCUIT: ${BANK.cuit}`;
 }
 function progress(){
   const n=loose();
@@ -721,6 +738,8 @@ function drawer(o){$("#drawer").classList.toggle("open",o);$("#drawer").setAttri
 $("#open").onclick=()=>drawer(true);$("#open2").onclick=()=>drawer(true);$("#close").onclick=$("#scrim").onclick=()=>drawer(false);$("#pback").onclick=closePdp;$("#stgo").onclick=()=>drawer(true);
 $("#q").oninput=e=>{qs=e.target.value;grid()};$("#sort").onchange=e=>{sort=e.target.value;grid()};$("#fsz").onchange=e=>{fsz=e.target.value;grid()};
 $("#fsz").innerHTML='<option value="">Todos los talles</option>'+[...new Set(DATA.flatMap(sizesOf))].sort().map(t=>`<option>${t}</option>`).join("");
+["fnom","fciu","fent"].forEach(id=>{$("#"+id).addEventListener("input",render);$("#"+id).addEventListener("change",render)});
+$("#cpalias").onclick=async()=>{try{await navigator.clipboard.writeText(BANK.alias);$("#cpalias").textContent="Alias copiado"}catch(e){$("#cpalias").textContent="Alias: Bona Street"}};
 $("#copy").onclick=async()=>{const t=orderText();if(!t)return;try{await navigator.clipboard.writeText(t);$("#msg").textContent="Pedido copiado. Pegalo en el chat de WhatsApp."}catch(e){$("#msg").textContent="No se pudo copiar. Usá el botón de enviar."}};
 $("#wa2").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Quiero consultar por el showroom.")}`;
 $("#boxwa").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Avisenme cuando salga la Bonabox.")}`;
