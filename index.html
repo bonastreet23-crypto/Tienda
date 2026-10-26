@@ -485,6 +485,7 @@ function addLine(d,v,extra){
   const f=cart.find(l=>l.sku===v.sku&&l.t===v.t&&(l.tag||"")===(extra.tag||"")&&l.fixed===extra.fixed);
   if(f){if(f.n<v.q)f.n++}else cart.push(Object.assign({sku:v.sku,id:d.id,name:d.name,c:v.c,t:v.t,p:d.p,n:1,q:v.q},extra));
 }
+const SRC=(()=>{try{const q=new URLSearchParams(location.search),s=q.get("utm_source"),m=q.get("utm_medium");if(s){sessionStorage.setItem("src",s+(m?" / "+m:""))}return sessionStorage.getItem("src")||""}catch(e){return""}})();
 const BANK={alias:"Bona Street",banco:"Mercado Pago",titular:"Alba Lucía Segovia Noguera",cuit:"27-50015658-4"};
 function orderText(){
   if(!cart.length)return"";
@@ -493,7 +494,7 @@ function orderText(){
   return "Hola Bona! Quiero hacer este pedido:\n"+cart.map(l=>`• ${l.n} x ${l.name}${l.c?" "+l.c:""} (talle ${l.t}) [${l.sku}]${l.tag?" - "+l.tag:""} - ${money(unit(l)*l.n)}`).join("\n")
    +(pct&&loose()>=3?`\nDescuento por cantidad (${loose()} prendas sueltas): ${pct*100}%`:"")
    +`\nTotal por transferencia: ${money(sub())}\nCon tarjeta: ${money(r100(sub()/.88))}`
-   +`\n\nMi nombre: ${nom}\nMi ciudad: ${ciu}\nEntrega: ${ent}`
+   +(SRC?`\nOrigen: ${SRC}`:"")+`\n\nMi nombre: ${nom}\nMi ciudad: ${ciu}\nEntrega: ${ent}`
    +`\n\nDatos para transferir:\nAlias: ${BANK.alias}\nBanco: ${BANK.banco}\nTitular: ${BANK.titular}\nCUIT: ${BANK.cuit}`;
 }
 function progress(){
