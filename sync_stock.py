@@ -6,6 +6,7 @@ Uso: python3 sync_stock.py CARPETA_PRODUCTOS salida/stock.json   (catalogo.json 
 import json,glob,sys,os,datetime
 src,out=sys.argv[1],sys.argv[2]
 cat=json.load(open(os.path.join(os.path.dirname(os.path.abspath(out)),"catalogo.json")))
+EXCLUIR={"DIA-015"}   # 27/10/2026 Luchi: duplicado del negro con detalles flúor (DIA-004)
 pub,base=set(cat["publicados"]),cat["precios"]
 s,pr,nuevos={},{},[]
 for f in sorted(glob.glob(os.path.join(src,"*.json"))):
@@ -14,7 +15,7 @@ for f in sorted(glob.glob(os.path.join(src,"*.json"))):
     for t,q in st.items(): s[f"{k}|{t}"]=max(0,int(q))
     if k in pub:
         if k in base and p.get("precio") and p["precio"]!=base[k]: pr[k]=p["precio"]
-    elif sum(max(0,int(q)) for q in st.values())>0 and p.get("activo",True): nuevos.append(k)
+    elif k not in EXCLUIR and sum(max(0,int(q)) for q in st.values())>0 and p.get("activo",True): nuevos.append(k)
 new={"s":s,"pr":pr,"nuevos":nuevos}
 old=json.load(open(out)) if os.path.exists(out) else {}
 if all(old.get(k)==v for k,v in new.items()): print("sin cambios"); sys.exit(0)
