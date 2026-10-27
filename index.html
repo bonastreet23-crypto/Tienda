@@ -499,7 +499,7 @@ function addLine(d,v,extra){
   const f=cart.find(l=>l.sku===v.sku&&l.t===v.t&&(l.tag||"")===(extra.tag||"")&&l.fixed===extra.fixed);
   if(f){if(f.n<v.q)f.n++}else cart.push(Object.assign({sku:v.sku,id:d.id,name:d.name,c:v.c,t:v.t,p:d.p,n:1,q:v.q},extra));
 }
-const SRC=(()=>{try{const q=new URLSearchParams(location.search),s=q.get("utm_source"),m=q.get("utm_medium");if(s){sessionStorage.setItem("src",s+(m?" / "+m:""))}return sessionStorage.getItem("src")||""}catch(e){return""}})();
+const SRC=(()=>{try{const q=new URLSearchParams(location.search),s=q.get("utm_source")||q.get("s"),m=q.get("utm_medium")||q.get("m");if(s){sessionStorage.setItem("src",s+(m?" / "+m:""))}return sessionStorage.getItem("src")||""}catch(e){return""}})();
 const BANK={alias:"Bona Street",banco:"Mercado Pago",titular:"Alba Lucía Segovia Noguera",cuit:"27-50015658-4"};
 function orderText(){
   if(!cart.length)return"";
@@ -779,4 +779,5 @@ $("#wa2").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Quiero
 $("#boxwa").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Avisenme cuando salga la Bonabox.")}`;
 $("#commwa").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Quiero sumarme a la comunidad.")}`;
 hero();strip();chips();grid();comboUI();packUI();calc();reviews();tick();setInterval(tick,1000);$('#revwa').href=`https://wa.me/${WA}?text=${encodeURIComponent('Hola Bona! Quiero dejar mi reseña de mi compra.')}`;render();
+(()=>{try{const q=new URLSearchParams(location.search),p=q.get("p");if(p&&byId(p))openPdp(p);else if(q.get("v")==="combos"){const e=document.getElementById("combos");e&&e.scrollIntoView()}}catch(e){}})();
 </script>
