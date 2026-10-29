@@ -6,6 +6,9 @@
 <meta name="theme-color" content="#01283D">
 <title>Bona Street Tienda</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<!-- Meta Pixel: PIXEL BONA STREET -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','2028106831270658');fbq('track','PageView');</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2028106831270658&ev=PageView&noscript=1"/></noscript>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;800&family=Aguafina+Script&display=swap">
 <style>
 [hidden]{display:none!important}
@@ -480,6 +483,7 @@ function grid(){
   $("#resumen").textContent=(shown.length<l.length?`Mostrando ${shown.length} de ${l.length} modelos. `:l.length+" modelos. ")+"Tocá una prenda para ver todas sus fotos.";
 }
 /* ---------- carrito ---------- */
+const TRK=(e,p)=>{try{window.fbq&&fbq("track",e,p||{})}catch(x){}};   /* eventos del píxel de Meta */
 let cart=[];
 const units=()=>cart.reduce((a,l)=>a+l.n,0);
 const isLoose=l=>l.fixed==null&&!l.disc;   /* combos (precio fijo), packs y accesorios con descuento propio NO cuentan para la escala 3/10/20 ni se acumulan con ella */
@@ -496,6 +500,7 @@ const sub=()=>subRaw()-cupMonto();
 const cupAhorro=()=>{if(!cupOn())return 0;const k=CUP;CUP=null;const s0=sub();CUP=k;return Math.max(0,s0-sub())};
 function addLine(d,v,extra){
   extra=extra||{};
+  TRK("AddToCart",{content_ids:[d.skus[0]],content_name:d.name,content_type:"product",value:d.p,currency:"ARS"});
   const f=cart.find(l=>l.sku===v.sku&&l.t===v.t&&(l.tag||"")===(extra.tag||"")&&l.fixed===extra.fixed);
   if(f){if(f.n<v.q)f.n++}else cart.push(Object.assign({sku:v.sku,id:d.id,name:d.name,c:v.c,t:v.t,p:d.p,n:1,q:v.q},extra));
 }
@@ -677,6 +682,7 @@ let P={id:null,i:0,mode:1,s1:0,s2:0};
 const seen=[];
 function openPdp(id,mode){
   P={id,i:0,mode:mode||1,s1:0,s2:0};pdp();
+  {const d0=byId(id);if(d0)TRK("ViewContent",{content_ids:[d0.skus[0]],content_name:d0.name,content_type:"product",value:d0.p,currency:"ARS"})}
   $("#pdp").hidden=false;$("#pdp").scrollTop=0;document.documentElement.style.overflow="hidden";
   if(!seen.includes(id))seen.unshift(id);
   $("#sticky").hidden=true;
@@ -780,4 +786,6 @@ $("#boxwa").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Avis
 $("#commwa").href=`https://wa.me/${WA}?text=${encodeURIComponent("Hola Bona! Quiero sumarme a la comunidad.")}`;
 hero();strip();chips();grid();comboUI();packUI();calc();reviews();tick();setInterval(tick,1000);$('#revwa').href=`https://wa.me/${WA}?text=${encodeURIComponent('Hola Bona! Quiero dejar mi reseña de mi compra.')}`;render();
 (()=>{try{const q=new URLSearchParams(location.search),p=q.get("p");if(p&&byId(p))openPdp(p);else if(q.get("v")==="combos"){const e=document.getElementById("combos");e&&e.scrollIntoView()}}catch(e){}})();
+$("#wa").addEventListener("click",()=>{if(units()>0)TRK("InitiateCheckout",{value:sub(),currency:"ARS",num_items:units()})});
+$("#copy").addEventListener("click",()=>{if(units()>0)TRK("InitiateCheckout",{value:sub(),currency:"ARS",num_items:units()})});
 </script>
