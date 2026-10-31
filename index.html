@@ -214,7 +214,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
 .comm .btn{background:var(--navy);color:var(--navy-ink)}
 @media (max-width:900px){.cstrip .wrap{grid-template-columns:minmax(0,1fr)}.cstrip{margin-top:-28px}}
 
-.cd{background:var(--alert);color:#fff;text-align:center;font-size:13px;font-weight:700;padding:8px 12px;letter-spacing:.02em}
+.cd{background:#d4141c;color:#fff;text-align:center;font-size:13px;font-weight:700;padding:8px 12px;letter-spacing:.02em}
 .cd b{font-variant-numeric:tabular-nums}
 .more{display:flex;justify-content:center;margin-top:24px}
 .rev{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:24px}
@@ -434,7 +434,7 @@ function photo(d,i,alt){
 const num=k=>+k.split("-")[1];
 /* ---------- combos (precios fijos de Luchi, efectivo o transferencia, sin descuento por cantidad) ---------- */
 const COMBOS=[
- {k:"eco",n:"Combo Económico",d:"Bermuda baggy jogging + remera",price:33500,lo:14,hi:28},
+ {k:"eco",n:"Combo Básico",d:"Bermuda baggy jogging + remera",price:33500,lo:14,hi:28},
  {k:"prem",n:"Combo Premium",d:"Bermuda baggy pocket + remera",price:47900,lo:29,hi:29},
  {k:"denim",n:"Combo Denim",d:"Bermuda baggy de jean + remera",price:58900,lo:1,hi:13}
 ];
@@ -660,7 +660,7 @@ function makeCombo(newId,li){
   render();
 }
 /* ---------- cuenta regresiva y reseñas ---------- */
-const LAUNCH_END=new Date("2026-11-02T23:59:59-03:00");   /* 8 días desde el 25/10; decisión de Luchi: cada 8 días ella pide renovarla */
+const LAUNCH_END=new Date("2026-11-05T23:59:59-03:00");   /* renovada el 31/10 a pedido de Luchi hasta el 5/11 (anuncios del test 1) */
 function tick(){
   const ms=LAUNCH_END-Date.now(),el=$("#cd");
   if(ms<=0){el.hidden=true;return}
