@@ -251,7 +251,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
     <div>
       <div class="cap rise" style="color:var(--support)">Bona Street · San Juan, Argentina</div>
       <h1 class="rise">Streetwear<span class="sc">para todos los días.</span></h1>
-      <p class="rise">Combos desde $33.500, 12% OFF por transferencia y hasta 32% OFF llevando más. Armás el carrito y cerrás por WhatsApp.</p>
+      <p class="rise">Combos desde $35.000, 12% OFF por transferencia y hasta 32% OFF llevando más. Armás el carrito y cerrás por WhatsApp.</p>
       <div class="acts rise"><a class="btn" href="#combos">Armá tu combo</a><a class="link" href="#productos">Ver todo →</a></div>
       <div class="tabs" id="htabs" role="group" aria-label="Destacados"></div>
     </div>
@@ -434,7 +434,7 @@ function photo(d,i,alt){
 const num=k=>+k.split("-")[1];
 /* ---------- combos (precios fijos de Luchi, efectivo o transferencia, sin descuento por cantidad) ---------- */
 const COMBOS=[
- {k:"eco",n:"Combo Básico",d:"Bermuda baggy jogging + remera",price:33500,lo:14,hi:28},
+ {k:"eco",n:"Combo Básico",d:"Bermuda baggy jogging + remera",price:35000,lo:14,hi:28},
  {k:"prem",n:"Combo Premium",d:"Bermuda baggy pocket + remera",price:47900,lo:29,hi:29},
  {k:"denim",n:"Combo Denim",d:"Bermuda baggy de jean + remera",price:58900,lo:1,hi:13}
 ];
@@ -533,12 +533,12 @@ function ship(){
 }
 function xsell(){
   const ber=cart.some(l=>byId(l.id)&&byId(l.id).cat==="Bermudas"&&l.fixed==null),rem=cart.some(l=>byId(l.id)&&byId(l.id).cat==="Remeras");
-  if(ber&&!rem)return `<div class="xsell"><b>Sumá una remera y pagás precio de combo</b><button class="ghost" type="button" data-cgo="0">Ver combos desde ${money(33500)}</button></div>`;
+  if(ber&&!rem)return `<div class="xsell"><b>Sumá una remera y pagás precio de combo</b><button class="ghost" type="button" data-cgo="0">Ver combos desde ${money(35000)}</button></div>`;
   return"";
 }
 function render(){
   const u=units();$("#cnt").textContent=u;$("#cnt2").textContent=u;
-  $("#items").innerHTML=cart.length?cart.map((l,i)=>{const d=byId(l.id);return `<div class="it"><div class="ph">${photo(d)}</div><div><b>${l.name}</b>${l.tag?" · "+l.tag:""}<br><span class="note">${l.c?l.c+" · ":""}Talle ${l.t} · ${money(unit(l))}</span></div><div class="qty"><button type="button" data-d="-1" data-i="${i}" aria-label="Menos">−</button>${l.n}<button type="button" data-d="1" data-i="${i}" aria-label="Más">+</button></div></div>`}).join(""):'<p class="note">Todavía no agregaste nada. Los combos arrancan en $33.500.</p>';
+  $("#items").innerHTML=cart.length?cart.map((l,i)=>{const d=byId(l.id);return `<div class="it"><div class="ph">${photo(d)}</div><div><b>${l.name}</b>${l.tag?" · "+l.tag:""}<br><span class="note">${l.c?l.c+" · ":""}Talle ${l.t} · ${money(unit(l))}</span></div><div class="qty"><button type="button" data-d="-1" data-i="${i}" aria-label="Menos">−</button>${l.n}<button type="button" data-d="1" data-i="${i}" aria-label="Más">+</button></div></div>`}).join(""):'<p class="note">Todavía no agregaste nada. Los combos arrancan en $35.000.</p>';
   $("#prog").innerHTML=progress()+ship();$("#watot").textContent=money(sub());crossSell();upsell();
   const s=sub(),c=r100(s/.88),p=tierPct(loose()),list=cart.reduce((a,l)=>a+l.p*l.n,0);
   $("#tot").innerHTML=(cupOn()?`<div class="r"><span>Cupón ${CUP.code}</span><span>-${money(cupAhorro())}</span></div>`:"")+(list-s>1?`<div class="r"><span>Ahorrás vs. precio de lista</span><span>${money(list-s)}</span></div>`:"")+`<div class="r"><span>Con tarjeta</span><span>${money(c)}</span></div><div class="t"><span>Transferencia</span><span>${money(s)}</span></div>`;
@@ -697,7 +697,7 @@ function pdp(){
   const lad=[[1,0],[3,.15],[10,.23],[20,.32]].map(([q,p])=>`<tr><td>${q===1?"1 unidad":q+" o más"}</td><td>${p?p*100+"% OFF":"Precio lista"}</td><td>${money(d.p*(1-p))} c/u</td></tr>`).join("");
   const cm=comboOf(d);let cross="";
   if(cm){const R=remeras()[0],sv=saveOf(cm,d,R);cross=`<div class="xsell" style="margin-top:14px"><b>Completá tu fit: ${cm.n} ${money(cm.price)}</b><span class="note">Esta bermuda + una remera. Ahorrás ${money(sv.sum-cm.price)} (${sv.off}% OFF) frente a comprarlas sueltas.</span><button class="btn" type="button" data-cgo="${COMBOS.indexOf(cm)}" data-ca="${d.id}">Armar combo con esta bermuda</button></div>`}
-  else if(d.cat==="Remeras"&&d.cmb){cross=`<div class="xsell" style="margin-top:14px"><b>Sumale una bermuda y pagás precio de combo</b><span class="note">Combos desde ${money(33500)} por transferencia.</span><button class="btn" type="button" data-cgo="0" data-cb="${d.id}">Armar combo con esta remera</button></div>`}
+  else if(d.cat==="Remeras"&&d.cmb){cross=`<div class="xsell" style="margin-top:14px"><b>Sumale una bermuda y pagás precio de combo</b><span class="note">Combos desde ${money(35000)} por transferencia.</span><button class="btn" type="button" data-cgo="0" data-cb="${d.id}">Armar combo con esta remera</button></div>`}
   $("#pbody").innerHTML=`<div class="gal"><div class="main ph">${photo(d,P.i)}${n>1?'<button class="nav" style="left:10px" data-nav="-1" type="button" aria-label="Anterior">‹</button><button class="nav" style="right:10px" data-nav="1" type="button" aria-label="Siguiente">›</button>':""}</div><div class="thumbs">${thumbs}</div></div>
   <div class="pinfo"><div class="cap" style="color:var(--green)">${d.cat}</div><h1>${d.name}</h1>
   <div style="margin-top:14px"><span class="big">${money(pk?r100(d.p*2*(1-PACK)):d.p)}</span> <span style="color:var(--green);font-weight:700;font-size:14px">por transferencia${pk?" · pack ×2":""}</span>${pk?`<span class="old">${money(d.p*2)}</span>`:""}</div>
