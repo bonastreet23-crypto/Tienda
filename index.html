@@ -247,7 +247,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
 .mph{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;background:var(--support);cursor:pointer}
 .mph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .mph .hbadge{background:var(--navy)}
-.tt{margin-top:24px;scroll-margin-top:90px}.tt img{width:100%;height:auto;display:block;margin-top:10px;border-radius:12px;border:1px solid var(--line)}.ttlink{display:inline-block;margin-top:8px;color:var(--green);font-weight:800;font-size:14px;text-decoration:underline}
+.tt{margin-top:10px}.tt summary{display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;border:1px solid var(--green);color:var(--green);border-radius:999px;padding:8px 14px;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.05em}.tt summary::-webkit-details-marker{display:none}.tt summary::after{content:"▾"}.tt[open] summary::after{content:"▴"}.tt img{width:100%;height:auto;display:block;margin-top:10px;border-radius:12px;border:1px solid var(--line)}
 .mband .btn{background:var(--navy);color:var(--base)}
 .mband .link{color:var(--ink);border-bottom-color:var(--ink);font-size:16px;cursor:pointer}
 .mprices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px;max-width:560px}
@@ -820,10 +820,9 @@ function pdp(){
   <label class="cap" style="display:block;margin-top:6px">Talle${pk?" · prenda 1":""}</label><select class="sel" id="p1">${vopts}</select>
   ${pk?`<label class="cap" style="display:block;margin-top:10px">Talle · prenda 2</label><select class="sel" id="p2">${vopts}</select>`:""}
   ${d.sub==="Zapatillas"?`<div class="gift">Incluye medias 3/4 de regalo · Llevá 2 por $90.000</div>`:""}
-  ${ttOf(d)?`<a class="ttlink" href="#ptt">Ver tabla de talles ↓</a>`:""}
+  ${ttOf(d)?`<details class="tt"><summary>Ver tabla de talles</summary><img src="${ttOf(d)[0]}" alt="${ttOf(d)[1]}" loading="lazy"></details>`:""}
   <div class="note" style="margin-top:6px">${tot<=1?"Última unidad.":tot<=3?`Quedan ${tot} unidades entre todos los talles.`:tot+" unidades en stock entre todos los talles."}</div>
   <div style="display:grid;gap:10px;margin-top:16px"><button class="btn" id="padd" type="button">Agregar al carrito</button><button class="ghost" type="button" data-pk="${d.id}">Armar un pack ×2 con esta prenda (10% OFF)</button></div>${cross}
-  ${ttOf(d)?`<div class="tt" id="ptt"><div class="cap" style="color:var(--green)">Tabla de talles</div><img src="${ttOf(d)[0]}" alt="${ttOf(d)[1]}" loading="lazy"></div>`:""}
   <div class="cap" style="margin-top:28px">Cuanto más llevás, menos pagás</div>
   <table class="ladder"><thead><tr><th>Cantidad</th><th>Descuento</th><th>Transferencia</th></tr></thead><tbody>${lad}</tbody></table>
   <ul class="facts"><li>Envío gratis desde $125.000 a todo el país. En San Juan, envíos en el día por moto mensajería.</li><li>Retiro en San Juan (Rivadavia, Suipacha 4027, lunes a viernes de 9 a 18) o en CABA (Caballito).</li><li>Pagás por transferencia con 12% OFF o con tarjeta, y cerramos todo por WhatsApp.</li></ul></div>`;
