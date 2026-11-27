@@ -81,6 +81,13 @@ section.sec{padding-block:72px;scroll-margin-top:84px}
 .sec h2{font-size:clamp(34px,5vw,60px);margin-top:12px}
 .sec h2 .sc{font-size:1.25em;color:var(--green);letter-spacing:0}
 .tools{display:flex;gap:10px;flex-wrap:wrap;margin-block:26px 22px;align-items:center}
+.ptabs{margin-block:22px 16px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:4px;max-width:520px}
+.seg button{border:0;background:transparent;color:var(--ink);font-weight:800;font-size:15px;border-radius:12px;padding:10px 8px;line-height:1.15;cursor:pointer}
+.seg button small{display:block;font-weight:500;font-size:11px;color:var(--mute)}
+.seg button[aria-pressed="true"]{background:var(--navy);color:var(--base)}.seg button[aria-pressed="true"] small{color:var(--support)}
+.ptrow{display:flex;gap:8px;overflow-x:auto;flex-wrap:nowrap;margin-top:12px;padding-bottom:8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin;mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.ptrow .chip{flex:0 0 auto;scroll-snap-align:start;white-space:nowrap}
 .chip{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--ink);background:transparent;font-weight:500;font-size:14px}
 .chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--green-ink);font-weight:700}
 .search{flex:1 1 200px;min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--paper);padding:0 18px;min-width:0}
@@ -332,9 +339,9 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
 
 <section class="sec" id="packs"><div class="wrap">
   <div class="cap" style="color:var(--green)">Packs</div>
-  <h2>Packs <span class="sc">de verano.</span></h2>
-  <p style="font-size:18px;max-width:32em;margin:16px 0 0">Elegí el pack y los modelos que quieras: 10% OFF sobre el total o precio fijo según el pack (shorts importados, mallas, malla + remera). Pagás por transferencia o efectivo. El pack no se suma al descuento por cantidad.</p>
-  <div class="tools" id="ptabs" role="group" aria-label="Tipo de pack"></div>
+  <h2>Packs y combos <span class="sc">de verano.</span></h2>
+  <p style="font-size:18px;max-width:32em;margin:16px 0 0">Elegís modelo y talle de cada prenda. Precio fijo por transferencia o efectivo.</p>
+  <div id="ptabs" class="ptabs"></div>
   <div class="fitcard" id="packcard" style="max-width:760px"></div>
   <p class="note" style="margin-top:12px">Los packs y combos ya incluyen su descuento y no se suman a otras promos.</p>
 </div></section>
@@ -666,21 +673,24 @@ const PACKTYPES=[
  {n:"2 baggys o joggings",f:d=>d.cat==="Baggys y joggings"},
  {n:"2 shorts importados · $55.000",f:d=>d.sub==="Short Diamond Importado",fixed:55000,tag:"Combo ×2 shorts"},   /* solo DIA (importados), no los NBA */
  {n:"2 mallas surfer · $40.000",f:d=>d.sub==="Mallas",fixed:40000,tag:"Pack ×2 mallas",k:"mallas2"},
- {n:"Malla + remera · $38.999",f:d=>d.sub==="Mallas",fb:d=>d.cat==="Remeras"&&!/Morley/i.test(d.name),fixed:38999,tag:"Malla + remera",lab:"Combo verano",k:"mallaremera"},
+ {n:"Malla + remera · $38.999",f:d=>d.sub==="Mallas",fb:d=>d.cat==="Remeras"&&!/Morley/i.test(d.name),fixed:38999,tag:"Malla + remera",lab:"Combo verano",k:"mallaremera",g:"combo"},
  {n:"2 zapatillas · $90.000",f:d=>d.sub==="Zapatillas",fixed:90000,tag:"Pack ×2 zapas + medias 3/4 de regalo",k:"zapas2"},
  {n:"2 ojotas · $29.999",f:d=>d.sub==="Ojotas",fixed:29999,tag:"Pack ×2 ojotas",k:"ojotas2"},
  {n:"3 remeras · $55.000",f:d=>d.cat==="Remeras"&&d.cmb&&!/Morley/i.test(d.name),fc:d=>d.cat==="Remeras"&&d.cmb&&!/Morley/i.test(d.name),fixed:55000,tag:"Pack ×3 remeras",lab:"Pack ×3",k:"rem3"},
  {n:"2 bermudas jogging básicas · $29.999",f:d=>/^Bermuda jogging bassic/i.test(d.name),fixed:29999,tag:"Pack ×2 bermudas básicas",k:"ber2"},
- {n:"Remera + 2 bermudas · $42.300",f:d=>d.cat==="Remeras"&&d.cmb&&!/Morley/i.test(d.name),fb:d=>/^Bermuda jogging bassic/i.test(d.name),fc:d=>/^Bermuda jogging bassic/i.test(d.name),fixed:42300,tag:"Combo remera + 2 bermudas",lab:"Combo verano",k:"rem2ber"},
- {n:"Remera NBA + short NBA · $25.000",f:d=>/^(NBA Bassic|NK Bassic|J-Air Bassic)/.test(d.name),fb:d=>d.sub==="Short NBA",fixed:25000,tag:"Combo NBA",lab:"Combo verano",k:"nba"},
- {n:"Short NBA + ojotas · $25.000",f:d=>d.sub==="Short NBA",fb:d=>d.sub==="Ojotas",fixed:25000,tag:"Combo short + ojotas",lab:"Combo verano",k:"pileta"}
+ {n:"Remera + 2 bermudas · $42.300",f:d=>d.cat==="Remeras"&&d.cmb&&!/Morley/i.test(d.name),fb:d=>/^Bermuda jogging bassic/i.test(d.name),fc:d=>/^Bermuda jogging bassic/i.test(d.name),fixed:42300,tag:"Combo remera + 2 bermudas",lab:"Combo verano",k:"rem2ber",g:"combo"},
+ {n:"Remera NBA + short NBA · $25.000",f:d=>/^(NBA Bassic|NK Bassic|J-Air Bassic)/.test(d.name),fb:d=>d.sub==="Short NBA",fixed:25000,tag:"Combo NBA",lab:"Combo verano",k:"nba",g:"combo"},
+ {n:"Short NBA + ojotas · $25.000",f:d=>d.sub==="Short NBA",fb:d=>d.sub==="Ojotas",fixed:25000,tag:"Combo short + ojotas",lab:"Combo verano",k:"pileta",g:"combo"}
 ];   /* 27/11/2026 Luchi: zapas $50.000 (2 x $90.000, medias 3/4 de regalo), ojotas $18.500 (2 x $29.999), jean $35.000 (2 x $60.000), combos NBA y short + ojotas $25.000 */   /* 27/11/2026: mallas surfer $24.000 c/u, 2 x $40.000, malla + remera $38.999 (Luchi) */
 let pt=0,pc={a:null,b:null};
 const pool=k=>{const t=PACKTYPES[pt];return DATA.filter((k==="b"&&t.fb)||(k==="c"&&(t.fc||t.fb))||t.f).sort((x,y)=>y.ph.length-x.ph.length)};
 const slots=()=>PACKTYPES[pt].fc?["a","b","c"]:["a","b"];   /* combos de 3 prendas (remera + 2 bermudas) */
 function packUI(){
   const T=PACKTYPES[pt];
-  $("#ptabs").innerHTML=PACKTYPES.map((t,i)=>`<button class="chip" type="button" data-pt="${i}" aria-pressed="${i===pt}">${t.n}</button>`).join("");
+  const grp=T.g||"pack",first=g=>PACKTYPES.findIndex(t=>(t.g||"pack")===g);
+  $("#ptabs").innerHTML=`<div class="seg" role="group" aria-label="Packs o combos"><button type="button" data-pt="${first("pack")}" aria-pressed="${grp==="pack"}">Packs <small>mismo producto</small></button><button type="button" data-pt="${first("combo")}" aria-pressed="${grp==="combo"}">Combos <small>outfit armado</small></button></div>
+  <div class="ptrow" role="group" aria-label="Elegí el ${grp}">${PACKTYPES.map((t,i)=>(t.g||"pack")===grp?`<button class="chip" type="button" data-pt="${i}" aria-pressed="${i===pt}">${t.n}</button>`:"").join("")}</div>`;
+  {const on=$("#ptabs .ptrow [aria-pressed=true]");if(on)on.parentNode.scrollLeft=Math.max(0,on.offsetLeft-on.parentNode.offsetLeft-16)}
   const L={a:pool("a"),b:pool("b"),c:pool("c")};
   if(!pc.a||!L.a.some(d=>d.id===pc.a))pc.a=L.a[0].id;
   if(!pc.b||!L.b.some(d=>d.id===pc.b))pc.b=(T.fb?L.b[0]:(L.b[1]||L.b[0])).id;
