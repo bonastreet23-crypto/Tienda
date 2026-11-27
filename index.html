@@ -247,7 +247,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
 .mph{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;background:var(--support);cursor:pointer}
 .mph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .mph .hbadge{background:var(--navy)}
-.tt{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:10px 14px}.tt summary{cursor:pointer;font-weight:800;color:var(--green);text-transform:uppercase;font-size:13px;letter-spacing:.05em}.tt img{width:100%;height:auto;display:block;margin-top:10px;border-radius:8px}
+.tt{margin-top:24px;scroll-margin-top:90px}.tt img{width:100%;height:auto;display:block;margin-top:10px;border-radius:12px;border:1px solid var(--line)}.ttlink{display:inline-block;margin-top:8px;color:var(--green);font-weight:800;font-size:14px;text-decoration:underline}
 .mband .btn{background:var(--navy);color:var(--base)}
 .mband .link{color:var(--ink);border-bottom-color:var(--ink);font-size:16px;cursor:pointer}
 .mprices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px;max-width:560px}
@@ -792,6 +792,8 @@ function openPdp(id,mode){
   if(!seen.includes(id))seen.unshift(id);
   $("#sticky").hidden=true;
 }
+/* tablas de talles por producto (27/11/2026) */
+const ttOf=d=>d.sub==="Mallas"?["img/tabla-talles-mallas.jpg","Tabla de talles de mallas: talle US 30 a 40 (S a XXXL), ancho y largo en centímetros"]:/^Bermuda jogging bassic/i.test(d.name)?["img/tabla-talles-bermuda-jogging-bassic.jpg","Tabla de talles de bermudas jogging básicas: talle 1 a 6 (S a XXXL), cintura, largo, entrepierna y ancho en centímetros"]:null;
 let LB=0;   /* visor de fotos en tamaño completo (27/11/2026) */
 function lbShow(){const d=byId(P.id);$("#lbimg").src=d.ph[LB];$("#lbimg").alt=d.name;$("#lbc").textContent=d.ph.length>1?`${LB+1} / ${d.ph.length}`:"";document.querySelectorAll(".lbn").forEach(b=>b.hidden=d.ph.length<2)}
 function lbOpen(){const d=byId(P.id);if(!d||!d.ph.length)return;LB=P.i||0;lbShow();$("#lb").hidden=false}
@@ -818,9 +820,10 @@ function pdp(){
   <label class="cap" style="display:block;margin-top:6px">Talle${pk?" · prenda 1":""}</label><select class="sel" id="p1">${vopts}</select>
   ${pk?`<label class="cap" style="display:block;margin-top:10px">Talle · prenda 2</label><select class="sel" id="p2">${vopts}</select>`:""}
   ${d.sub==="Zapatillas"?`<div class="gift">Incluye medias 3/4 de regalo · Llevá 2 por $90.000</div>`:""}
-  ${d.sub==="Mallas"?`<details class="tt"><summary>Ver tabla de talles</summary><img src="img/tabla-talles-mallas.jpg" alt="Tabla de talles de mallas: talle US 30 a 40, ancho y largo en centímetros" loading="lazy"></details>`:""}
+  ${ttOf(d)?`<a class="ttlink" href="#ptt">Ver tabla de talles ↓</a>`:""}
   <div class="note" style="margin-top:6px">${tot<=1?"Última unidad.":tot<=3?`Quedan ${tot} unidades entre todos los talles.`:tot+" unidades en stock entre todos los talles."}</div>
   <div style="display:grid;gap:10px;margin-top:16px"><button class="btn" id="padd" type="button">Agregar al carrito</button><button class="ghost" type="button" data-pk="${d.id}">Armar un pack ×2 con esta prenda (10% OFF)</button></div>${cross}
+  ${ttOf(d)?`<div class="tt" id="ptt"><div class="cap" style="color:var(--green)">Tabla de talles</div><img src="${ttOf(d)[0]}" alt="${ttOf(d)[1]}" loading="lazy"></div>`:""}
   <div class="cap" style="margin-top:28px">Cuanto más llevás, menos pagás</div>
   <table class="ladder"><thead><tr><th>Cantidad</th><th>Descuento</th><th>Transferencia</th></tr></thead><tbody>${lad}</tbody></table>
   <ul class="facts"><li>Envío gratis desde $125.000 a todo el país. En San Juan, envíos en el día por moto mensajería.</li><li>Retiro en San Juan (Rivadavia, Suipacha 4027, lunes a viernes de 9 a 18) o en CABA (Caballito).</li><li>Pagás por transferencia con 12% OFF o con tarjeta, y cerramos todo por WhatsApp.</li></ul></div>`;
