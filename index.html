@@ -63,6 +63,13 @@ nav{display:flex;gap:28px;align-items:center;font-size:13px}
 .hshot .ph{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:4/5;background:var(--support)}
 .hshot .info{position:absolute;left:14px;bottom:14px;right:14px;max-width:320px;background:var(--base);color:var(--ink);border-radius:16px;padding:12px 16px}
 .star{position:absolute;color:var(--support)}
+.hprice{display:flex;align-items:center;gap:14px;margin-top:22px}
+.hprice b{font-size:clamp(46px,7vw,76px);font-weight:800;line-height:1;color:var(--base);background:var(--green);padding:6px 16px 8px;border-radius:14px;letter-spacing:-.02em}
+.hprice span{font-size:14px;line-height:1.25;color:var(--support);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.hcar{cursor:pointer}
+.hcar img{opacity:0;transition:opacity .8s ease}
+.hcar img.on{opacity:1}
+.hbadge{position:absolute;top:14px;right:14px;z-index:2;background:var(--green);color:var(--base);font-weight:800;text-transform:uppercase;font-size:13px;line-height:1.05;text-align:center;padding:12px 10px;border-radius:50%;width:76px;height:76px;display:grid;place-items:center;transform:rotate(10deg)}
 .ph{background:var(--support);position:relative;overflow:hidden;display:grid;place-items:center}
 .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .ph .fb{padding:14px;text-align:center;font-weight:800;text-transform:uppercase;letter-spacing:-.02em;opacity:.55;font-size:20px;line-height:1}
@@ -142,6 +149,8 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
 @media (max-width:900px){
   .hgrid,.two,.show{grid-template-columns:minmax(0,1fr);gap:40px}
   .hshot{max-width:380px}
+  .hero .hshot{order:-1;max-width:340px}   /* celular: la foto del combo verano es lo primero que se ve */
+  .hero .wrap{padding-block:28px 56px}
 }
 @media (max-width:720px){
   .top .cap{display:block;text-align:center;font-size:10px;letter-spacing:.08em;line-height:1.5;padding:7px 12px}.top .dot{display:inline-block;vertical-align:middle;margin:0 8px}.top .cap span{display:inline}
@@ -249,17 +258,17 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
 <section class="hero full" id="inicio"><div class="pat"></div><div class="wrap">
   <div class="hgrid">
     <div>
-      <div class="cap rise" style="color:var(--support)">Bona Street · San Juan, Argentina</div>
-      <h1 class="rise">Streetwear<span class="sc">para todos los días.</span></h1>
-      <p class="rise">Combos desde $35.000, 12% OFF por transferencia y hasta 32% OFF llevando más. Armás el carrito y cerrás por WhatsApp.</p>
-      <div class="acts rise"><a class="btn" href="#combos">Armá tu combo</a><a class="link" href="#productos">Ver todo →</a></div>
-      <div class="tabs" id="htabs" role="group" aria-label="Destacados"></div>
+      <div class="cap rise" style="color:var(--support)">Nuevo · Combo del verano</div>
+      <h1 class="rise">Combo verano<span class="sc">remera + bermuda.</span></h1>
+      <div class="hprice rise"><b>$35.000</b><span>por transferencia<br>los dos juntos</span></div>
+      <p class="rise">Elegí cualquier remera de la colección nueva y sumale una bermuda jogging. Armás el carrito y cerrás por WhatsApp.</p>
+      <div class="acts rise"><button class="btn" type="button" data-cgo="0">Armá tu combo</button><a class="link" href="#productos">Ver todo →</a></div>
     </div>
     <div class="hshot rise">
       <div class="frame"></div>
-      <div class="ph" id="hph"></div>
+      <div class="ph hcar" id="hph" data-cgo="0" role="img" aria-label="Combo verano: remera + bermuda jogging"><img src="img/hero/combo-verano-0.jpg" alt="Remera nueva con bermudas jogging" class="on" fetchpriority="high"><img src="img/hero/combo-verano-1.jpg" alt="" loading="lazy"><img src="img/hero/combo-verano-2.jpg" alt="" loading="lazy"><span class="hbadge">Combo<br>verano</span></div>
       <svg class="star" style="right:-18px;top:30px;width:64px;transform:rotate(12deg)" viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M20 0l3.2 13.2L40 20l-16.8 6.8L20 40l-3.2-13.2L0 20l16.8-6.8z"/></svg>
-      <div class="info"><div class="cap" style="color:var(--green);font-size:11px" id="hcat"></div><div style="font-weight:700;margin-top:2px" id="hname"></div><div><span style="font-size:22px;font-weight:800" id="hprice"></span> <span style="font-size:13px;color:var(--green);font-weight:700">por transferencia</span></div></div>
+      <div class="info"><div class="cap" style="color:var(--green);font-size:11px">Combo verano</div><div style="font-weight:700;margin-top:2px">Remera nueva + bermuda jogging</div><div><span style="font-size:22px;font-weight:800">$35.000</span> <span style="font-size:13px;color:var(--green);font-weight:700">por transferencia</span></div></div>
     </div>
   </div>
 </div></section>
@@ -446,10 +455,9 @@ const saveOf=(c,a,b)=>({sum:a.p+b.p,off:Math.round((1-c.price/(a.p+b.p))*100)});
 /* ---------- hero ---------- */
 const heroPick=[["Remeras",()=>DATA.find(d=>/Hawk Tour White/i.test(d.name))],["Bermudas",()=>byId("BER-012")],["Baggys",()=>byId("BAG-002")],["Buzos",()=>byId("BUZ-003")]];
 let hi=0;
-function hero(){
-  $("#htabs").innerHTML=heroPick.map((h,i)=>`<button class="tab" type="button" data-h="${i}" aria-pressed="${i===hi}">${h[0]}</button>`).join("");
-  const d=heroPick[hi][1]()||DATA[0];
-  $("#hph").innerHTML=photo(d);$("#hph").dataset.open=d.id;$("#hcat").textContent=d.cat;$("#hname").textContent=d.name;$("#hprice").textContent=money(d.p);
+function hero(){   /* 27/11/2026: banner Combo verano $35.000 con fotos de remeras nuevas + bermudas (pedido de Luchi) */
+  const ims=[...document.querySelectorAll("#hph img")];let k=0;
+  if(ims.length>1&&!matchMedia("(prefers-reduced-motion: reduce)").matches)setInterval(()=>{ims[k].classList.remove("on");k=(k+1)%ims.length;ims[k].classList.add("on")},3500);
 }
 function strip(){
   const R=remeras()[0];
@@ -736,6 +744,7 @@ function calc(){
 document.addEventListener("click",e=>{
   const o=e.target.closest("[data-open]");
   if(o&&!e.target.closest(".sz,.add")){openPdp(o.dataset.open);return}
+  if(e.target.closest("#hph")){goCombo(0);return}
   const t=e.target.closest("button");if(!t)return;
   if(t.dataset.cgo!==undefined){goCombo(+t.dataset.cgo,t.dataset.ca,t.dataset.cb);return}
   if(t.dataset.h!==undefined){hi=+t.dataset.h;hero()}
