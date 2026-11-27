@@ -724,9 +724,11 @@ function addPack(){
   else it.forEach((d,i)=>addLine(d,d.v[$("#pv"+ks[i]).value],{disc:PACK,tag:"Pack ×2"}));
   render();drawer(true);
 }
+/* pack del mismo producto que conviene ofrecer desde la ficha: primero precio fijo de 2, después fijo de 3, después 10% OFF (27/11/2026) */
+function packFor(d){const L=PACKTYPES.map((t,i)=>[t,i]).filter(([t])=>!t.g&&!t.fb&&t.f(d));const r=([t])=>t.fixed?(t.fc?1:0):2;L.sort((a,b)=>r(a)-r(b));return L.length?L[0][1]:-1}
 function goPackType(x){const i=isNaN(x)?PACKTYPES.findIndex(t=>t.k===x):+x;if(i<0)return;pt=i;pc={a:null,b:null,c:null};packUI();closePdp();drawer(false);$("#packs").scrollIntoView({behavior:"smooth"})}
 function goPack(id){
-  const d=byId(id);const i=PACKTYPES.findIndex(t=>t.f(d));if(i>=0){pt=i;pc={a:id,b:null};packUI()}
+  const d=byId(id);const i=packFor(d);if(i>=0){pt=i;pc={a:id,b:null,c:null};packUI()}
   closePdp();$("#packs").scrollIntoView({behavior:"smooth"});
 }
 /* ---------- accesorios (upsell del carrito) ---------- */
@@ -822,7 +824,7 @@ function pdp(){
   ${d.sub==="Zapatillas"?`<div class="gift">Incluye medias 3/4 de regalo · Llevá 2 por $90.000</div>`:""}
   ${ttOf(d)?`<details class="tt"><summary>Ver tabla de talles</summary><img src="${ttOf(d)[0]}" alt="${ttOf(d)[1]}" loading="lazy"></details>`:""}
   <div class="note" style="margin-top:6px">${tot<=1?"Última unidad.":tot<=3?`Quedan ${tot} unidades entre todos los talles.`:tot+" unidades en stock entre todos los talles."}</div>
-  <div style="display:grid;gap:10px;margin-top:16px"><button class="btn" id="padd" type="button">Agregar al carrito</button><button class="ghost" type="button" data-pk="${d.id}">Armar un pack ×2 con esta prenda (10% OFF)</button></div>${cross}
+  <div style="display:grid;gap:10px;margin-top:16px"><button class="btn" id="padd" type="button">Agregar al carrito</button>${packFor(d)>=0?`<button class="ghost" type="button" data-pk="${d.id}">Armar pack: ${PACKTYPES[packFor(d)].n}${PACKTYPES[packFor(d)].fixed?"":" (10% OFF)"}</button>`:""}</div>${cross}
   <div class="cap" style="margin-top:28px">Cuanto más llevás, menos pagás</div>
   <table class="ladder"><thead><tr><th>Cantidad</th><th>Descuento</th><th>Transferencia</th></tr></thead><tbody>${lad}</tbody></table>
   <ul class="facts"><li>Envío gratis desde $125.000 a todo el país. En San Juan, envíos en el día por moto mensajería.</li><li>Retiro en San Juan (Rivadavia, Suipacha 4027, lunes a viernes de 9 a 18) o en CABA (Caballito).</li><li>Pagás por transferencia con 12% OFF o con tarjeta, y cerramos todo por WhatsApp.</li></ul></div>`;
