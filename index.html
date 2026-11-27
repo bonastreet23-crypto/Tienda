@@ -175,7 +175,15 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
 .pdp .bar{position:sticky;top:0;z-index:2;background:var(--base);border-bottom:1px solid var(--line);padding:max(10px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
 .pdp .bar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .pgrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;padding-block:28px 60px;align-items:start}
-.gal .main{aspect-ratio:4/5;border-radius:24px;overflow:hidden;position:relative}
+.gal .main{aspect-ratio:4/5;border-radius:24px;overflow:hidden;position:relative;cursor:zoom-in}
+.lb{position:fixed;inset:0;z-index:40;background:rgba(1,20,30,.96);display:grid;place-items:center}
+.lb[hidden]{display:none}
+.lb img{max-width:100vw;max-height:88vh;object-fit:contain;display:block}
+.lbx{position:absolute;top:max(12px,env(safe-area-inset-top,0px));right:12px;width:48px;height:48px;border-radius:50%;border:0;background:var(--base);color:var(--ink);font-size:28px;line-height:1;z-index:2;cursor:pointer}
+.lbn{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:0;background:var(--base);color:var(--ink);font-size:24px;z-index:2;cursor:pointer}.lbn[hidden]{display:none}
+.lbc{position:absolute;bottom:max(14px,env(safe-area-inset-bottom,0px));left:0;right:0;text-align:center;color:var(--base);font-size:13px;font-weight:700}
+.pair .ph[data-open]{cursor:pointer}
+.pair .ph[data-open]::after{content:"Ver producto ›";position:absolute;left:8px;bottom:8px;z-index:2;background:rgba(1,40,61,.82);color:#fff;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px}
 .gal .thumbs{display:flex;gap:10px;margin-top:12px;overflow-x:auto;padding-bottom:4px}
 .gal .thumbs button{flex:none;width:72px;height:90px;border-radius:12px;overflow:hidden;border:2px solid transparent;padding:0;background:var(--support);position:relative}
 .gal .thumbs button[aria-pressed="true"]{border-color:var(--green)}
@@ -467,6 +475,7 @@ footer .logo{width:64px;height:52px;color:var(--ink)}
   <div class="wrap" style="padding-inline:max(16px,env(safe-area-inset-left,0px))"><div class="pgrid" id="pbody"></div>
   <div id="prel" style="padding-bottom:60px"></div></div>
 </div>
+<div class="lb" id="lb" hidden role="dialog" aria-label="Foto en tamaño completo"><button class="lbx" type="button" data-lbx aria-label="Cerrar">×</button><img id="lbimg" alt=""><button class="nav lbn" type="button" data-lb="-1" style="left:10px" aria-label="Anterior">‹</button><button class="nav lbn" type="button" data-lb="1" style="right:10px" aria-label="Siguiente">›</button><div class="lbc" id="lbc"></div></div>
 <div class="drawer" id="drawer" aria-hidden="true">
   <div class="scrim" id="scrim"></div>
   <aside class="panel" role="dialog" aria-label="Carrito">
@@ -650,7 +659,7 @@ function comboUI(){
 }
 function comboShow(){
   const c=COMBOS[ci],a=byId($("#sa").value),b=byId($("#sb").value);cs.a=a.id;cs.b=b.id;
-  $("#ca").innerHTML=photo(a);$("#cb").innerHTML=photo(b);$("#va").innerHTML=vopt(a);$("#vb").innerHTML=vopt(b);
+  $("#ca").innerHTML=photo(a);$("#cb").innerHTML=photo(b);$("#ca").dataset.open=a.id;$("#cb").dataset.open=b.id;$("#va").innerHTML=vopt(a);$("#vb").innerHTML=vopt(b);
   const sv=saveOf(c,a,b);
   $("#ctag").textContent=`${a.name} + ${b.name}`;
   $("#cprice").textContent=money(c.price);$("#cold").textContent=money(sv.sum);$("#csave").textContent=`${sv.off}% OFF`;
@@ -704,7 +713,7 @@ function packUI(){
   packShow();
 }
 function packShow(){
-  const it=slots().map(k=>{const d=byId($("#ps"+k).value);pc[k]=d.id;$("#pph"+k).innerHTML=photo(d);$("#pv"+k).innerHTML=vopt(d);return d});
+  const it=slots().map(k=>{const d=byId($("#ps"+k).value);pc[k]=d.id;$("#pph"+k).innerHTML=photo(d);$("#pph"+k).dataset.open=d.id;$("#pv"+k).innerHTML=vopt(d);return d});
   const sum=it.reduce((x,d)=>x+d.p,0),fx=PACKTYPES[pt].fixed,pr=fx||r100(sum*(1-PACK));
   $("#ppr").textContent=money(pr);$("#pold").textContent=money(sum);$("#pcard").textContent=money(r100(pr/.88))+" con tarjeta";
 }
@@ -783,6 +792,12 @@ function openPdp(id,mode){
   if(!seen.includes(id))seen.unshift(id);
   $("#sticky").hidden=true;
 }
+let LB=0;   /* visor de fotos en tamaño completo (27/11/2026) */
+function lbShow(){const d=byId(P.id);$("#lbimg").src=d.ph[LB];$("#lbimg").alt=d.name;$("#lbc").textContent=d.ph.length>1?`${LB+1} / ${d.ph.length}`:"";document.querySelectorAll(".lbn").forEach(b=>b.hidden=d.ph.length<2)}
+function lbOpen(){const d=byId(P.id);if(!d||!d.ph.length)return;LB=P.i||0;lbShow();$("#lb").hidden=false}
+function lbGo(k){const d=byId(P.id);LB=(LB+k+d.ph.length)%d.ph.length;lbShow()}
+function lbClose(){$("#lb").hidden=true}
+document.addEventListener("keydown",e=>{if($("#lb").hidden)return;if(e.key==="Escape")lbClose();else if(e.key==="ArrowRight")lbGo(1);else if(e.key==="ArrowLeft")lbGo(-1)});
 function closePdp(){$("#pdp").hidden=true;document.documentElement.style.overflow="";render()}
 function pdp(){
   const d=byId(P.id),n=d.ph.length||1;
@@ -833,6 +848,8 @@ function calc(){
 }
 /* ---------- eventos ---------- */
 document.addEventListener("click",e=>{
+  if(!$("#lb").hidden){const n=e.target.closest("[data-lb]");if(n){lbGo(+n.dataset.lb);return}if(!e.target.closest("#lbimg")||e.target.closest("[data-lbx]")){lbClose();return}lbGo(1);return}
+  {const gm=e.target.closest("#pbody .gal .main");if(gm&&!e.target.closest(".nav")){lbOpen();return}}
   const o=e.target.closest("[data-open]");
   if(o&&!e.target.closest(".sz,.add")){openPdp(o.dataset.open);return}
   if(e.target.closest(".hv")){goCombo(0);return}
